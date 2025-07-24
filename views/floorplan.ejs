@@ -15,16 +15,14 @@
     <li class="breadcrumb-item" aria-current="page"><%= floorplan.floor %></li>
   </ol>
 </nav>
+    <div class="container">
+
     <table class="table">
       <tbody>
         <tr>
-          <td><b>Block Name</b></td>
-          <td><b>Floor</b></td>
-          <td><b>Floor Plan</b></td>
+          <td><b>Viewing Floor Plan of <%=hosteldata.hostel_name %> Block's <%= floorplan.floor %>st Floor</b></td>
         </tr>
         <tr>
-          <td><%= hosteldata.hostel_name %></td>
-          <td><%= floorplan.floor %></td>
           <td><img src="<%= floorplan.link %>" width="50%" height="50%"></img></td>
         </tr>
        
@@ -53,7 +51,7 @@
  
   <input type="submit" value="Fetch" class="btn btn-primary">
 </form>
-    
+    </div>
     <%- include('partials/footer') %>
   </body>
 </html>

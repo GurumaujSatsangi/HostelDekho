@@ -12,6 +12,7 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 const app = express();
+app.use(express.static("public"));
 
 app.get("/", async (req, res) => {
   const { data, error } = await supabase.from("hostels").select("*");
