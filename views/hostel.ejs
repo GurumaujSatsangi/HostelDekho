@@ -1,0 +1,43 @@
+<%- include('partials/navbar') %>
+<h3>Hostel Details</h3>
+<hr />
+<table class="table">
+  <tbody>
+    <tr>
+      <td><b>Name</b></td>
+      <td><%= hosteldata.hostel_name %></td>
+    </tr>
+    <tr>
+      <td><b>Type</b></td>
+      <td><%= hosteldata.hostel_type %></td>
+    </tr>
+    <tr>
+      <td><b>Type of Bedrooms Available</b></td>
+      <td><%= hosteldata.bed_availability %></td>
+    </tr>
+
+    <tr>
+      <td><b>Bed Type</b></td>
+      <td><%= hosteldata.bed_type %></td>
+    </tr>
+  </tbody>
+</table>
+<h3>Floor Plans</h3>
+<hr />
+<% if(floors && floors.length>0){ %>
+<% floors.forEach(function(floor){ %>
+<table class="table">
+  <tbody>
+    <tr>
+      <td></td>
+      <td></td>
+    </tr>
+    <% }); %>
+  </tbody>
+</table>
+<% } else { %>
+<h4>No Floor Plans available!</h4>
+<% } %>
+
+
+<%- include('partials/footer') %>
