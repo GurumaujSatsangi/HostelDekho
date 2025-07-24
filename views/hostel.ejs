@@ -43,7 +43,7 @@
         <tr>
                 <% if(floorplan && floorplan.length>0){ %> <% floorplan.forEach(function(floor){ %>
 
-          <td><a href="<%= floor.link %>" type="button" class="btn btn-outline-warning"><%= floor.floor %></a></td>
+          <td><a href="/view/hostel/<%= hosteldata.hostel_id %>/floor-plan/<%= floor.id %>" type="button" class="btn btn-outline-warning"><%= floor.floor %></a></td>
                 <% }); %>
 
         </tr>
