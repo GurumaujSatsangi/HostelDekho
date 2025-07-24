@@ -13,8 +13,12 @@ const supabase = createClient(
 );
 const app = express();
 
-app.get("/", (req, res) => {
-  res.render("home.ejs");
+app.get("/", async (req, res) => {
+   const { data, error } = await supabase
+    .from("hostels")
+    .select("*");
+    
+    res.render("home.ejs", {hosteldata:data});
 });
 
 app.get("/view/hostel/:id", async (req, res) => {
@@ -24,12 +28,12 @@ app.get("/view/hostel/:id", async (req, res) => {
     .eq("hostel_id", req.params.id)
     .single();
 
-  const { floorplan, floorplanerror } = await supabase
+  const { data: floorplan, error: floorplanerror } = await supabase
     .from("floor_plans")
     .select("*")
     .eq("hostel_id", req.params.id);
 
-  return res.render("hostel.ejs", { hosteldata: data, floors: floorplan });
+  return res.render("hostel.ejs", { hosteldata: data, floorplan });
 });
 
 app.listen(3000, () => {
