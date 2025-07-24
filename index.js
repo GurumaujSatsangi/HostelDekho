@@ -14,11 +14,9 @@ const supabase = createClient(
 const app = express();
 
 app.get("/", async (req, res) => {
-   const { data, error } = await supabase
-    .from("hostels")
-    .select("*");
-    
-    res.render("home.ejs", {hosteldata:data});
+  const { data, error } = await supabase.from("hostels").select("*");
+
+  res.render("home.ejs", { hosteldata: data });
 });
 
 app.get("/view/hostel/:id", async (req, res) => {
@@ -36,25 +34,41 @@ app.get("/view/hostel/:id", async (req, res) => {
   return res.render("hostel.ejs", { hosteldata: data, floorplan });
 });
 
-app.get("/view/hostel/:hostelid/floor-plan/:planid", async (req,res)=> {
-
+app.get("/view/hostel/:hostelid/floor-plan/:planid", async (req, res) => {
   const { data, error } = await supabase
     .from("hostels")
     .select("*")
     .eq("hostel_id", req.params.hostelid)
     .single();
 
+  const { data: roomdata, error: roomerror } = await supabase
+    .from("floor_plan")
+    .select("*")
+    .eq("hostel_id", req.params.hostelid)
+    .eq("id", req.params.planid);
 
   const { data: floorplan, error: floorplanerror } = await supabase
     .from("floor_plans")
     .select("*")
     .eq("hostel_id", req.params.hostelid)
-    .eq("id",req.params.planid)
+    .eq("id", req.params.planid)
     .single();
 
-    return res.render("floorplan.ejs", {  hosteldata: data, floorplan });
+  return res.render("floorplan.ejs", { hosteldata: data, floorplan, roomdata });
+});
 
-})
+app.post("/fetch-room-details", async (req, res) => {
+  const roomid = req.body.roomid;
+  const hostelid = req.body.hostelid;
+  const floorid = req.body.floorid;
+  const { data, error } = await supabase
+    .from("rooms")
+    .select("*")
+    .eq("hostel_id", hostelid)
+    .eq("floor_id", floorid)
+    .eq("room_id", roomid)
+    .single();
+});
 
 app.listen(3000, () => {
   console.log("Running on Port 3000!");

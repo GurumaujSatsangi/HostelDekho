@@ -7,7 +7,52 @@
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <h3>You are viewing the floor plan of floor - <%= floorplan.floor %> of <%= hosteldata.hostel_name %> Block. </h3>
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/view/hostel/<%= hosteldata.hostel_id %>"><%= hosteldata.hostel_name %></a></li>
+
+    <li class="breadcrumb-item" aria-current="page"><%= floorplan.floor %></li>
+  </ol>
+</nav>
+    <table class="table">
+      <tbody>
+        <tr>
+          <td><b>Block Name</b></td>
+          <td><b>Floor</b></td>
+          <td><b>Floor Plan</b></td>
+        </tr>
+        <tr>
+          <td><%= hosteldata.hostel_name %></td>
+          <td><%= floorplan.floor %></td>
+          <td><img src="<%= floorplan.link %>" width="50%" height="50%"></img></td>
+        </tr>
+       
+        
+      </tbody>
+    </table>
+    <hr>
+<form action="/fetch-room-details" method="POST">
+  <div class="mb-3">
+    <input type="hidden" name="hostelid" value="<%= hosteldata.hostel_id %>">
+    <input type="hidden" name="floorid" value="<%= floorplan.id %>">
+
+    <label for="roomSelect" class="form-label">Select Room</label>
+<select class="form-select" required id="roomSelect" name="room_id" aria-label="Room select">
+  <% if (roomdata && roomdata.length > 0) { %>
+    <% roomdata.forEach(roomoptions => { %>
+      <option value="<%= roomoptions.room_id %>"><%= roomoptions.room_number %></option>
+    <% }); %>
+  <% } else { %>
+    <option disabled selected>No rooms available</option>
+  <% } %>
+</select>
+
+  </div>
+ 
+ 
+  <input type="submit" value="Fetch" class="btn btn-primary">
+</form>
     
     <%- include('partials/footer') %>
   </body>
