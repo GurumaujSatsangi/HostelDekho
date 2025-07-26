@@ -1,7 +1,9 @@
 import express from "express";
 import bodyParser from "body-parser";
 import ejs from "ejs";
-import sql from "mssql";
+import session from "express-session";
+import { fileURLToPath } from "url";
+import path from "path";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 
@@ -12,8 +14,11 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.static("public"));
-
 app.get("/", async (req, res) => {
   const { data, error } = await supabase.from("hostels").select("*");
 
