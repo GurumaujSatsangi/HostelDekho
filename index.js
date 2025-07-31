@@ -175,6 +175,26 @@ app.get("/logout", (req, res) => {
   });
 });
 
+app.post("/submit-room-details", async (req,res)=>{
+  const block = req.body.block;
+  const floor = req.body.floor;
+  const remarks = req.body.remarks;
+  const roomnumber = req.body.roomnumber;
+  const speedtes = req.body.speedtest;
+  const photo = req.body.photo;
+
+  await supabase.from("rooms")
+  .insert({
+  
+    "block":block,
+    "floor":floor,
+    "roomnumber":roomnumber,
+    "photo":photo,
+    "remarks":remarks,
+    "submitted_by":req.user.name,
+  });
+})
+
 app.get("/dashboard", async (req, res) => {
 
    if (!req.isAuthenticated()) {
