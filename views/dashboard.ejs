@@ -8,21 +8,12 @@
       type="button"
       >Logout</a
     >
+
+    
   </div>
+  <table class="table"><tr><td>Your Block is <%= user.block %></td></tr></table>
   <form action="/submit-room-details" method="POST">
-    <div class="mb-3">
-      <label for="exampleInputEmail1" class="form-label">Select Block</label>
-      <select
-        class="form-select"
-        name="block"
-        aria-label="Default select example"
-      >
-        <option selected>Open this select menu</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-      </select>
-    </div>
+ 
 
     <div class="mb-3">
       <label for="exampleInputEmail1" class="form-label">Select Floor</label>
@@ -30,12 +21,7 @@
         class="form-select"
         name="floor"
         aria-label="Default select example"
-      >
-        <option selected>Open this select menu</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-      </select>
+      ></select>
     </div>
 
     <div class="mb-3">
@@ -88,20 +74,4 @@
   </form>
 </div>
 
-<% if (message) {%>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-  Swal.fire({
-    title: "Good job!",
-    text: "<%= message %>",
-    icon: "success",
-  });
-
-  if (window.location.search.includes('message=')) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-</script>
-
-<% } %> 
-<%- include('partials/footer') %>
+ <%- include('partials/footer') %>

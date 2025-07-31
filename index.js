@@ -149,15 +149,46 @@ app.get(
   })
 );
 
+app.post("/update-profile", async (req, res) => {
+  const block = req.body.block;
+  await supabase.from("users").update({ block: block }).eq("uid", req.user.uid);
+  res.redirect("/dashboard");
+});
+
+app.get("/update-profile", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+  const { data, error } = await supabase.from("hostels").select("hostel_name");
+  const { data: profiledata, error: profileerror } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", req.user.email)
+    .single();
+  if (!profiledata || !profiledata.block || profiledata.block.length === 0) {
+    res.render("profile.ejs", { data, user: req.user });
+  } else {
+    res.render("dashboard.ejs", { data, user: req.user });
+  }
+});
 app.get(
   "/auth/google/dashboard",
   passport.authenticate("google", {
     failureRedirect: "/",
-    successRedirect: "/dashboard",
+    successRedirect: "/update-profile",
   }),
   async (req, res) => {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", req.user.email)
+      .single();
     if (!req.isAuthenticated()) {
       return res.redirect("/");
+    } else if (data.block == "") {
+      res.render("profile.ejs", {
+        user: req.user,
+      });
     } else {
       res.render("dashboard.ejs", {
         user: req.user,
@@ -193,7 +224,9 @@ app.post("/submit-room-details", async (req, res) => {
         .json({ error: "Database insert failed", details: error.message });
     }
 
-    res.redirect("/dashboard?message=Room Details have beed added successfully!");
+    res.redirect(
+      "/dashboard?message=Room Details have beed added successfully!"
+    );
   } catch (err) {
     console.error("Unexpected error:", err);
     res.status(500).json({ error: "Unexpected server error" });
@@ -207,7 +240,16 @@ app.get("/dashboard", async (req, res) => {
 
   const message = req.query.message || null;
 
-  return res.render("dashboard.ejs", { user: req.user, message:message, });
+  const { data, error } = await supabase.from("hostels").select("hostel_name");
+  const { floordata, floorerror } = await supabase
+    .from("floor_plans")
+    .select("");
+
+  return res.render("dashboard.ejs", {
+    user: req.user,
+    message: message,
+    data: data,
+  });
 });
 app.listen(3000, () => {
   console.log("Running on Port 3000!");
