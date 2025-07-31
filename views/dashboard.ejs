@@ -11,17 +11,27 @@
 
     
   </div>
-  <table class="table"><tr><td>Your Block is <%= user.block %></td></tr></table>
+  <table class="table"><tr><td><b>Your Block is <%= user.block %></b></td></tr></table>
   <form action="/submit-room-details" method="POST">
  
 
     <div class="mb-3">
       <label for="exampleInputEmail1" class="form-label">Select Floor</label>
-      <select
+    <select
         class="form-select"
         name="floor"
         aria-label="Default select example"
-      ></select>
+      >
+      <% if (floordata && floordata.length > 0) { %>
+ <% floordata.forEach(function(floor) { %>
+
+    <option value="<%= floor.id %>"><%= floor.floor %></option>
+  <% }) %>
+<% } else { %>
+  <option disabled>No floors available</option>
+<% } %>
+
+      </select>
     </div>
 
     <div class="mb-3">

@@ -175,7 +175,7 @@ app.get(
   "/auth/google/dashboard",
   passport.authenticate("google", {
     failureRedirect: "/",
-    successRedirect: "/update-profile",
+    successRedirect: "/dashboard",
   }),
   async (req, res) => {
     const { data, error } = await supabase
@@ -240,17 +240,39 @@ app.get("/dashboard", async (req, res) => {
 
   const message = req.query.message || null;
 
-  const { data, error } = await supabase.from("hostels").select("hostel_name");
-  const { floordata, floorerror } = await supabase
+  const { data: userdata, error: usererror } = await supabase
+    .from("users")
+    .select("*")
+    .eq("uid", req.user.uid)
+    .single();
+
+  if (usererror || !userdata) {
+    console.error("User error:", usererror);
+    return res.status(500).send("User data fetch failed.");
+  }
+
+  const { data: data, error: error } = await supabase
+    .from("hostels")
+    .select("hostel_name");
+
+  const { data: floordata, error: floorerror } = await supabase
     .from("floor_plans")
-    .select("");
+    .select("*")
+    .eq("hostel_id", userdata.block);
+
+  if (floorerror) {
+    console.error("Floor data error:", floorerror);
+  }
+
 
   return res.render("dashboard.ejs", {
     user: req.user,
-    message: message,
-    data: data,
+    floordata,
+    message,
+    data,
   });
 });
+
 app.listen(3000, () => {
   console.log("Running on Port 3000!");
 });
