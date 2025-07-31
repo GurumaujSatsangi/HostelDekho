@@ -175,34 +175,39 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.post("/submit-room-details", async (req,res)=>{
-  const block = req.body.block;
-  const floor = req.body.floor;
-  const remarks = req.body.remarks;
-  const roomnumber = req.body.roomnumber;
-  const speedtes = req.body.speedtest;
-  const photo = req.body.photo;
+app.post("/submit-room-details", async (req, res) => {
+  const { block, floor, remarks, roomnumber, speedtest } = req.body;
 
-  await supabase.from("rooms")
-  .insert({
-  
-    "block":block,
-    "floor":floor,
-    "roomnumber":roomnumber,
-    "photo":photo,
-    "remarks":remarks,
-    "submitted_by":req.user.name,
-  });
-})
+  try {
+    const { data, error } = await supabase.from("rooms").insert({
+      block: block,
+      floor: floor,
+      room_number: roomnumber,
+      remarks: remarks,
+    });
+
+    if (error) {
+      console.error("Insert error:", error);
+      return res
+        .status(500)
+        .json({ error: "Database insert failed", details: error.message });
+    }
+
+    res.redirect("/dashboard?message=Room Details have beed added successfully!");
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    res.status(500).json({ error: "Unexpected server error" });
+  }
+});
 
 app.get("/dashboard", async (req, res) => {
-
-   if (!req.isAuthenticated()) {
+  if (!req.isAuthenticated()) {
     return res.redirect("/");
   }
 
+  const message = req.query.message || null;
 
-  return res.render("dashboard.ejs", {user:req.user});
+  return res.render("dashboard.ejs", { user: req.user, message:message, });
 });
 app.listen(3000, () => {
   console.log("Running on Port 3000!");

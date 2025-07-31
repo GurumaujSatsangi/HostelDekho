@@ -1,4 +1,5 @@
 <%- include('dashboard/partials/navbar') %>
+
 <div class="container">
   <div class="alert alert-primary" role="alert">
     <b>Welcome, <%= user.name %></b> &nbsp;<a
@@ -9,10 +10,13 @@
     >
   </div>
   <form action="/submit-room-details" method="POST">
-    
-        <div class="mb-3">
+    <div class="mb-3">
       <label for="exampleInputEmail1" class="form-label">Select Block</label>
-      <select class="form-select" name="block" aria-label="Default select example">
+      <select
+        class="form-select"
+        name="block"
+        aria-label="Default select example"
+      >
         <option selected>Open this select menu</option>
         <option value="1">One</option>
         <option value="2">Two</option>
@@ -20,42 +24,84 @@
       </select>
     </div>
 
-     <div class="mb-3">
+    <div class="mb-3">
       <label for="exampleInputEmail1" class="form-label">Select Floor</label>
-      <select class="form-select" name="floor" aria-label="Default select example">
+      <select
+        class="form-select"
+        name="floor"
+        aria-label="Default select example"
+      >
         <option selected>Open this select menu</option>
         <option value="1">One</option>
         <option value="2">Two</option>
         <option value="3">Three</option>
       </select>
     </div>
-
 
     <div class="mb-3">
       <label for="exampleInputPassword1" class="form-label">Room Number</label>
-      <input type="number" class="form-control" name="room_number" id="exampleInputPassword1" />
+      <input
+        type="number"
+        class="form-control"
+        name="room_number"
+        id="exampleInputPassword1"
+      />
     </div>
 
     <div class="mb-3">
       <label for="exampleInputPassword1" class="form-label">Speed Test</label>
-      <input type="button" class="form-control" name="speedtest" id="exampleInputPassword1" />
+      <input
+        type="button"
+        class="form-control"
+        name="speedtest"
+        id="exampleInputPassword1"
+      />
     </div>
 
     <div class="mb3">
       <label for="exampleInputPassword1" class="form-label">Room's Photo</label>
 
       <div class="input-group mb-3">
-        <input type="file" class="form-control" name="photo" id="inputGroupFile02" />
+        <input
+          type="file"
+          class="form-control"
+          name="photo"
+          id="inputGroupFile02"
+        />
         <label class="input-group-text" for="inputGroupFile02">Upload</label>
       </div>
     </div>
 
     <div class="mb-3">
-  <label for="exampleFormControlTextarea1" class="form-label">Remarks</label>
-  <textarea class="form-control" id="exampleFormControlTextarea1" name="remarks" rows="3"></textarea>
-</div>
+      <label for="exampleFormControlTextarea1" class="form-label"
+        >Remarks</label
+      >
+      <textarea
+        class="form-control"
+        id="exampleFormControlTextarea1"
+        name="remarks"
+        rows="3"
+      ></textarea>
+    </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <input type="submit" value="submit" class="btn btn-primary" />
   </form>
 </div>
+
+<% if (message) {%>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  Swal.fire({
+    title: "Good job!",
+    text: "<%= message %>",
+    icon: "success",
+  });
+
+  if (window.location.search.includes('message=')) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+</script>
+
+<% } %> 
 <%- include('partials/footer') %>
