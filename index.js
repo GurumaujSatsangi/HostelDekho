@@ -233,6 +233,13 @@ app.post("/submit-room-details", async (req, res) => {
   }
 });
 
+app.get("/admin/dashboard",async(req,res)=>{
+
+  const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*");
+  
+  res.render("admin/dashboard.ejs",{hosteldata});
+})
+
 app.get("/dashboard", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/");
@@ -260,6 +267,11 @@ app.get("/dashboard", async (req, res) => {
     .select("*")
     .eq("hostel_id", userdata.block);
 
+    const { data: userhosteldata, error: userhostelrerror } = await supabase
+    .from("hostels")
+    .select("hostel_name")
+    .eq("hostel_id", userdata.block).single();
+
   if (floorerror) {
     console.error("Floor data error:", floorerror);
   }
@@ -268,6 +280,7 @@ app.get("/dashboard", async (req, res) => {
   return res.render("dashboard.ejs", {
     user: req.user,
     floordata,
+    userhosteldata,
     message,
     data,
   });

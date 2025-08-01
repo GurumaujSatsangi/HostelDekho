@@ -1,0 +1,12 @@
+<%- include('../partials/navbar') %> <% if(hosteldata) && hosteldata.length>0
+{%>
+<table class="table">
+  <tbody>
+    <%hosteldata.forEach(function(hostels)) {%>
+
+    <tr>
+      <td><%= hostels.hostelname %></td>
+    </tr>
+  </tbody>
+</table>
+<%- include('../partials/footer') %>
