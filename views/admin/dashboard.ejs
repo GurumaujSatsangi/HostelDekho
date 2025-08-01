@@ -1,12 +1,30 @@
-<%- include('../partials/navbar') %> <% if(hosteldata) && hosteldata.length>0
-{%>
+<%- include('../partials/navbar') %> 
+<div class="container">
+<% if(hosteldata && hosteldata.length>0) {%>
 <table class="table">
   <tbody>
-    <%hosteldata.forEach(function(hostels)) {%>
+    <thead>
+        <tr>
+            <th>BLOCK</th>
+            <th>TYPE OF BLOCK (AC/NON-AC)</th>
+            <th>TYPE OF BED ROOMS AVAILABLE</th>
+            <th>BED TYPE</th>
+            <th>ACTION</th>
+        </tr>
+        
+    </thead>
+    <%hosteldata.forEach(function(hostels) {%>
 
     <tr>
-      <td><%= hostels.hostelname %></td>
+      <td><%= hostels.hostel_name %></td>
+      <td><%= hostels.hostel_type %></td>
+      <td><%= hostels.hostel_bed_availability %></td>
+      <td><%= hostels.hostel_bed_type %></td>
+      <td><a class="btn btn-outline-success" href="/admin/manage-hostel/<%= hostels.hostel_id%>">Manage<i class="bi bi-indent"></i></a></td>
     </tr>
+    <%}) %>
+     <%} %>
   </tbody>
 </table>
+</div>
 <%- include('../partials/footer') %>

@@ -237,7 +237,14 @@ app.get("/admin/dashboard",async(req,res)=>{
 
   const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*");
   
-  res.render("admin/dashboard.ejs",{hosteldata});
+  return res.render("admin/dashboard.ejs",{hosteldata});
+})
+
+app.get("/admin/manage-hostel/:id",async(req,res)=>{
+
+  const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*").eq("hostel_id",req.params.id).single();
+  
+  return res.render("admin/manage-hostels.ejs",{hosteldata});
 })
 
 app.get("/dashboard", async (req, res) => {
