@@ -34,11 +34,15 @@
           <th>VIEW FLOOR PLAN</th>
         </tr>
       </thead>
-
+<% if(floordata && floordata.length>0){ %>
+  <% floordata.forEach(function(floordata){ %>
       <tr>
         
-      
+      <td><%= floordata.floor %></td>
+      <td><a href="<%= floordata.link %>" target="_blank"><i class="bi bi-eye-fill"></i></a></td>
       </tr>
+      <% }) %>
+      <% } %>
     </tbody>
   </table>
 <h4>ROOMS</h4>

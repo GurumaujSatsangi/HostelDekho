@@ -243,8 +243,9 @@ app.get("/admin/dashboard",async(req,res)=>{
 app.get("/admin/manage-hostel/:id",async(req,res)=>{
 
   const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*").eq("hostel_id",req.params.id).single();
-  
-  return res.render("admin/manage-hostels.ejs",{hosteldata});
+  const{data:floordata,error:floorerror}=await supabase.from("floor_plans").select("*").eq("hostel_id",hosteldata.hostel_id);
+  const{data:roomdata,error:roomerror}=await supabase.from("rooms").select("*").eq("hostel_id",hosteldata.hostel_id);
+  return res.render("admin/manage-hostels.ejs",{hosteldata,floordata,roomdata});
 })
 
 app.get("/dashboard", async (req, res) => {
