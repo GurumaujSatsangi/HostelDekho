@@ -32,6 +32,7 @@
          
           <th>FLOOR</th>
           <th>VIEW FLOOR PLAN</th>
+          <th>ACTION</th>
         </tr>
       </thead>
 <% if(floordata && floordata.length>0){ %>
@@ -40,6 +41,7 @@
         
       <td><%= floordata.floor %></td>
       <td><a href="<%= floordata.link %>" target="_blank"><i class="bi bi-eye-fill"></i></a></td>
+      <td><a href="/admin/manage-hostel/modify/<%= hosteldata.hostel_id %>"><i class="bi bi-pencil-square"></i></a></td>
       </tr>
       <% }) %>
       <% } %>
@@ -58,12 +60,21 @@
           <th>SUBMITTED BY</th>
         </tr>
       </thead>
-
+<% if(roomdata && roomdata.length>0){ %>
+  <% roomdata.forEach(function(roomdata){%>
       <tr>
-        
+        <td><%=roomdata.room_number %></td>
+        <td><%= roomdata.speed_test %></td>
+        <td><%= roomdata.remarks %></td>
+        <td><%= roomdata.submitted_by %></td>
       
       </tr>
+      <% }) %>
+      <% } else { %>
+        <tr><td colspan="4">No Room Data Available!</td></tr> <% } %>
+      
     </tbody>
   </table>
+  
 </div>
 <%- include('../partials/footer') %>
