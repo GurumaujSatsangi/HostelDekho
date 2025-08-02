@@ -1,4 +1,10 @@
-<%- include('../partials/navbar') %>
+<%- include('../dashboard/partials/navbar') %>
+<nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/admin/dashboard" class="text-decoration-none">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">MANAGE FLOOR PLAN : <%= hosteldata.hostel_name %> - FLOOR <%= floordata.floor %></li>
+  </ol>
+</nav>
 <div class="container">
    <h4>MANAGE FLOOR PLAN</h4><hr>
    <table class="table">
