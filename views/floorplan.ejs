@@ -7,21 +7,17 @@
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="/view/hostel/<%= hosteldata.hostel_id %>"><%= hosteldata.hostel_name %></a></li>
-
-    <li class="breadcrumb-item" aria-current="page"><%= floorplan.floor %></li>
+<nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">FLOOR PLAN : <%= hosteldata.hostel_name %> - FLOOR <%= floorplan.floor %></li>
   </ol>
 </nav>
     <div class="container">
 
     <table class="table">
       <tbody>
-        <tr>
-          <td><b>Viewing Floor Plan of <%=hosteldata.hostel_name %> Block's <%= floorplan.floor %>st Floor</b></td>
-        </tr>
+        
         <tr>
           <td><img src="<%= floorplan.link %>" width="50%" height="50%"></img></td>
         </tr>

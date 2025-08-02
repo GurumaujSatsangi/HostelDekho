@@ -11,10 +11,16 @@
   </head>
   <body>
     <%- include('partials/navbar') %>
+    <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">HOSTEL DETAILS : <%= hosteldata.hostel_name %></li>
+  </ol>
+</nav>
     
     <div class="container">
       
-      <h4>Hostel Details</h4>
+      <h4>BLOCK DETAILS</h4>
       <hr />
       <table class="table">
         <tbody>
@@ -37,7 +43,7 @@
           
         </tbody>
       </table>
-      <h4>Floor Plans</h4>
+      <h4>FLOOR PLANS</h4>
       <hr />
       <table class="table">
         <tbody>
@@ -49,9 +55,15 @@
   <div class="accordion-item">
     <h2 class="accordion-header">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%=floor.floor%>" aria-expanded="false" aria-controls="collapseOne">
-        <%= floor.floor %>
+        <%= floor.floor %> &nbsp; <% if(!floor.link) {%>
+      <span class="badge text-bg-danger">NOT AVAILABLE</span>
+      <%} %>
+        
       </button>
+      
     </h2>
+    
+
     <div id="<%= floor.floor%>" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
       <div class="accordion-body">
 <center><img width="50%" src="<%= floor.link %>"></img>
