@@ -41,7 +41,7 @@
         
       <td><%= floordata.floor %></td>
       <td><a href="<%= floordata.link %>" target="_blank"><i class="bi bi-eye-fill"></i></a></td>
-      <td><a href="/admin/manage-hostel/modify/<%= hosteldata.hostel_id %>"><i class="bi bi-pencil-square"></i></a></td>
+      <td><a href="/admin/manage-hostel/<%= hosteldata.hostel_id %>/modify-floor/<%= floordata.id %>"><i class="bi bi-pencil-square"></i></a></td>
       </tr>
       <% }) %>
       <% } %>

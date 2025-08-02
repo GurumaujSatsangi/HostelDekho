@@ -240,6 +240,18 @@ app.get("/admin/dashboard",async(req,res)=>{
   return res.render("admin/dashboard.ejs",{hosteldata});
 })
 
+app.get("/admin/manage-hostel/:hostelid/modify-floor/:floorid", async(req,res)=>{
+  const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*").eq("hostel_id",req.params.hostelid).single();
+
+    const{data:floordata,error:floorerror}=await supabase.from("floor_plans").select("*").eq("id",req.params.floorid).single();
+  res.render("admin/edit-floor-plan.ejs", {hosteldata,floordata});
+
+});
+
+app.post("/modify-floor-plan", async(req,res)=>{
+  const new_image = req.body.new_image;
+})
+
 app.get("/admin/manage-hostel/:id",async(req,res)=>{
 
   const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*").eq("hostel_id",req.params.id).single();
