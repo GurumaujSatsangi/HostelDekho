@@ -248,6 +248,38 @@ app.get("/admin/manage-hostel/:hostelid/modify-floor/:floorid", async(req,res)=>
 
 });
 
+app.get("/admin/delete-hostel/:id", async(req,res)=>{
+  await supabase.from("hostels").delete().eq("hostel_id",req.params.id);
+  res.redirect("/admin/dashboard");
+  
+});
+
+app.post("/admin/:hostelid/new-floor",async(req,res)=>{
+const hostelid = req.params.hostelid;
+const floor = req.body.floor;
+
+const {data,error}=await supabase.from("floor_plans").insert({
+  hostel_id:hostelid,
+  floor:floor,
+});
+res.redirect("/admin/manage-hostel/${hostelid}");
+});
+
+app.post("/add-new-block",async(req,res)=>{
+  const {block,type,beds,btype} = req.body;
+const {data,error}=await supabase.from("hostels").insert({
+  hostel_name:block,
+  hostel_type:type,
+  bed_availability:beds,
+  bed_type:btype,
+});
+return res.redirect("/admin/dashboard");
+});
+
+app.get("/admin/dashboard/new-hostel",async(req,res)=>{
+res.render("admin/new-hostel.ejs");
+});
+
 app.post("/modify-floor-plan", async(req,res)=>{
   const new_image = req.body.new_image;
 })

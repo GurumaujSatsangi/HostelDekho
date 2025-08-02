@@ -1,6 +1,6 @@
 <%- include('../partials/navbar') %> 
 <div class="container">
-  <a href="#" class="btn btn-outline-primary">Add New Block</a>
+  <a href="/admin/dashboard/new-hostel" class="btn btn-outline-primary">Add New Block</a>
 <hr>
 <% if(hosteldata && hosteldata.length>0) {%>
 <table class="table">
@@ -20,8 +20,8 @@
     <tr>
       <td><%= hostels.hostel_name %></td>
       <td><%= hostels.hostel_type %></td>
-      <td><%= hostels.hostel_bed_availability %></td>
-      <td><%= hostels.hostel_bed_type %></td>
+      <td><%= hostels.bed_availability %></td>
+      <td><%= hostels.bed_type %></td>
       <td><a class="btn btn-outline-success" href="/admin/manage-hostel/<%= hostels.hostel_id%>"><i class="bi bi-pencil-square"></i></a></td>
       <td><a class="btn btn-outline-danger" href="/admin/delete-hostel/<%= hostels.hostel_id%>"><i class="bi bi-trash3-fill"></i></a></td>
 

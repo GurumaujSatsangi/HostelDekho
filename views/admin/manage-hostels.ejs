@@ -10,20 +10,21 @@
           <th>TYPE OF BLOCK (AC/NON-AC)</th>
           <th>TYPE OF BED ROOMS AVAILABLE</th>
           <th>BED TYPE</th>
-          <th>ACTION</th>
         </tr>
       </thead>
 
       <tr>
         <td><%= hosteldata.hostel_name %></td>
         <td><%= hosteldata.hostel_type %></td>
-        <td><%= hosteldata.hostel_bed_availability %></td>
-        <td><%= hosteldata.hostel_bed_type %></td>
+        <td><%= hosteldata.bed_availability %></td>
+        <td><%= hosteldata.bed_type %></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h4>FLOOR PLANS</h4>
+    <a href="/admin/<%=hosteldata.hostel_id %>/new-floor" class="btn btn-outline-primary">Add New Floor</a>
+
   <hr>
   <table class="table">
     <tbody>
