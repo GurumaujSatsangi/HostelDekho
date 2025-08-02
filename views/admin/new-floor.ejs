@@ -1,0 +1,20 @@
+<%- include('../partials/navbar') %>
+<div class="container">
+   <h4>ADD NEW FLOOR FOR <%= hosteldata.hostel_name %></h4>
+  <hr>
+ <form action="/add-new-floor" method="POST">
+  <div class="mb-3">
+    <label  class="form-label">FLOOR</label>
+    <input type="hidden" class="form-control" name="hostelid" value="<%= hosteldata.hostel_id%>" aria-describedby="emailHelp">
+
+    <input type="text" class="form-control" name="floor" aria-describedby="emailHelp">
+  </div>
+
+  <div class="mb-3">
+    <input type="submit" class="btn btn-success" value="ADD">
+  </div>
+   
+ </form>
+  
+</div>
+<%- include('../partials/footer') %>

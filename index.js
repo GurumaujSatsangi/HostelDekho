@@ -254,15 +254,22 @@ app.get("/admin/delete-hostel/:id", async(req,res)=>{
   
 });
 
-app.post("/admin/:hostelid/new-floor",async(req,res)=>{
-const hostelid = req.params.hostelid;
+app.get("/admin/:hostelid/new-floor", async(req,res)=>{
+
+  const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*").eq("hostel_id",req.params.hostelid).single();
+
+res.render("admin/new-floor.ejs",{hosteldata});
+});
+
+app.post("/add-new-floor",async(req,res)=>{
+const hostelid = req.body.hostelid;
 const floor = req.body.floor;
 
 const {data,error}=await supabase.from("floor_plans").insert({
   hostel_id:hostelid,
   floor:floor,
 });
-res.redirect("/admin/manage-hostel/${hostelid}");
+res.redirect(`/admin/manage-hostel/${hostelid}`);
 });
 
 app.post("/add-new-block",async(req,res)=>{
