@@ -261,6 +261,11 @@ app.get("/admin/:hostelid/new-floor", async(req,res)=>{
 res.render("admin/new-floor.ejs",{hosteldata});
 });
 
+app.get("/admin/delete-floor/:hostelid/:floorid", async(req,res)=>{
+const {data,error}=await supabase.from("floor_plans").delete().eq("id",req.params.floorid);
+return res.redirect(`/admin/manage-hostel/${req.params.hostelid}`)
+});
+
 app.post("/add-new-floor",async(req,res)=>{
 const hostelid = req.body.hostelid;
 const floor = req.body.floor;

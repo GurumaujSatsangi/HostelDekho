@@ -18,8 +18,17 @@
         <% hosteldata.forEach(function(hostel, index) { %>
         <div class="col-md-3 mb-4">
           <div class="card h-100">
+            <div class="card-header"><b><%= hostel.hostel_name %></b></div>
             <div class="card-body">
-              <h5 class="card-title"><%= hostel.hostel_name %></h5>
+              <p class="card-text">
+                <span class="badge text-bg-info"
+                  ><%= hostel.hostel_type %>
+                </span>
+                <span class="badge text-bg-info"
+                  ><%= hostel.bed_availability %></span
+                >
+                <span class="badge text-bg-info"><%= hostel.bed_type %></span>
+              </p><hr>
               <a
                 href="/view/hostel/<%= hostel.hostel_id %>"
                 class="btn btn-primary"
