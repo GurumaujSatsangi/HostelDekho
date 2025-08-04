@@ -12,7 +12,7 @@
     
   </div>
   <table class="table"><tr><td><b>Your Block is <%= userhosteldata.hostel_name %></b></td></tr></table>
-  <form action="/submit-room-details" method="POST">
+  <form action="/submit-room-details" method="POST" enctype="multipart/form-data">
  
 
     <div class="mb-3">
@@ -61,7 +61,7 @@
         <input
           type="file"
           class="form-control"
-          name="photo"
+          name="image"
           id="inputGroupFile02"
         />
         <label class="input-group-text" for="inputGroupFile02">Upload</label>

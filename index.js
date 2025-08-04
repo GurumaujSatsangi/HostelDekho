@@ -4,6 +4,8 @@ import ejs from "ejs";
 import session from "express-session";
 import { fileURLToPath } from "url";
 import path from "path";
+import {v2 as cloudinary} from "cloudinary";
+import multer from "multer";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
@@ -17,6 +19,7 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 const app = express();
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(
   session({
@@ -25,6 +28,13 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -210,30 +220,50 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.post("/submit-room-details", async (req, res) => {
+app.post("/submit-room-details", upload.single("image"), async (req, res) => {
   const { block, floor, remarks, roomnumber, speedtest } = req.body;
+  const image = req.file;
 
   try {
-    const { data, error } = await supabase.from("rooms").insert({
-      block: block,
-      floor: floor,
-      room_number: roomnumber,
-      remarks: remarks,
-    });
+    let imageUrl = null;
 
-    if (error) {
-      console.error("Insert error:", error);
-      return res
-        .status(500)
-        .json({ error: "Database insert failed", details: error.message });
+    if (image) {
+      const fileName = `room-${Date.now()}-${image.originalname}`;
+
+      const { data, error: uploadError } = await supabase.storage
+        .from("images") 
+        .upload(fileName, image.buffer, {
+          contentType: image.mimetype,
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("images").getPublicUrl(fileName);
+
+      imageUrl = publicUrl;
     }
 
-    res.redirect(
-      "/dashboard?message=Room Details have beed added successfully!"
-    );
+    const { error: insertError } = await supabase.from("rooms").insert({
+      block,
+      floor,
+      room_number: roomnumber,
+      remarks,
+      speedtest,
+      image_url: imageUrl,
+    });
+
+    if (insertError) {
+      throw insertError;
+    }
+
+    res.redirect("/dashboard?message=Room Details have been added successfully!");
   } catch (err) {
-    console.error("Unexpected error:", err);
-    res.status(500).json({ error: "Unexpected server error" });
+    console.error("Upload Error:", err);
+    res.status(500).json({ error: "Something went wrong", details: err.message });
   }
 });
 
@@ -263,6 +293,7 @@ app.get("/dashboard", async (req, res) => {
 
   const message = req.query.message || null;
 
+  // Get user data
   const { data: userdata, error: usererror } = await supabase
     .from("users")
     .select("*")
@@ -270,11 +301,29 @@ app.get("/dashboard", async (req, res) => {
     .single();
 
   if (usererror || !userdata) {
-    console.error("User error:", usererror);
+    console.error("User fetch error:", usererror);
     return res.status(500).send("User data fetch failed.");
   }
 
-  const { data: data, error: error } = await supabase
+  // If no block is assigned, render profile page
+  if (!userdata.block || userdata.block.trim() === "") {
+    const { data: hostels, error: hostelError } = await supabase
+      .from("hostels")
+      .select("hostel_id, hostel_name");
+
+    if (hostelError) {
+      console.error("Hostel data fetch error:", hostelError);
+      return res.status(500).send("Hostel data fetch failed.");
+    }
+
+    return res.render("profile.ejs", {
+      user: req.user,
+      data: hostels,
+    });
+  }
+
+  // Fetch required dashboard data
+  const { data: allHostels, error: hostelsError } = await supabase
     .from("hostels")
     .select("hostel_name");
 
@@ -283,24 +332,27 @@ app.get("/dashboard", async (req, res) => {
     .select("*")
     .eq("hostel_id", userdata.block);
 
-    const { data: userhosteldata, error: userhostelrerror } = await supabase
+  const { data: userhosteldata, error: userhostelerror } = await supabase
     .from("hostels")
     .select("hostel_name")
-    .eq("hostel_id", userdata.block).single();
+    .eq("hostel_id", userdata.block)
+    .single();
 
-  if (floorerror) {
-    console.error("Floor data error:", floorerror);
+  if (hostelsError || floorerror || userhostelerror) {
+    console.error("Dashboard data fetch error:", hostelsError || floorerror || userhostelerror);
+    return res.status(500).send("Dashboard data fetch failed.");
   }
 
-
+  // Render dashboard
   return res.render("dashboard.ejs", {
     user: req.user,
     floordata,
     userhosteldata,
     message,
-    data,
+    data: allHostels,
   });
 });
+
 
 app.listen(3000, () => {
   console.log("Running on Port 3000!");
