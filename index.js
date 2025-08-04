@@ -220,50 +220,32 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.post("/submit-room-details", upload.single("image"), async (req, res) => {
-  const { block, floor, remarks, roomnumber, speedtest } = req.body;
+app.post("/submit-room-details", async (req, res) => {
+  const { hostelid, floorid, remarks, roomnumber } = req.body;
   const image = req.file;
 
   try {
-    let imageUrl = null;
-
-    if (image) {
-      const fileName = `room-${Date.now()}-${image.originalname}`;
-
-      const { data, error: uploadError } = await supabase.storage
-        .from("images") 
-        .upload(fileName, image.buffer, {
-          contentType: image.mimetype,
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("images").getPublicUrl(fileName);
-
-      imageUrl = publicUrl;
-    }
-
-    const { error: insertError } = await supabase.from("rooms").insert({
-      block,
-      floor,
+    const { data, error } = await supabase.from("rooms").insert({
+      hostel_id:hostelid,
+      floor_id: floorid,
+      submitted_by:req.user.name,
       room_number: roomnumber,
-      remarks,
-      speedtest,
-      image_url: imageUrl,
+      remarks: remarks,
     });
 
-    if (insertError) {
-      throw insertError;
+    if (error) {
+      console.error("Insert error:", error);
+      return res
+        .status(500)
+        .json({ error: "Database insert failed", details: error.message });
     }
 
-    res.redirect("/dashboard?message=Room Details have been added successfully!");
+    res.redirect(
+      "/dashboard?message=Room Details have beed added successfully!"
+    );
   } catch (err) {
-    console.error("Upload Error:", err);
-    res.status(500).json({ error: "Something went wrong", details: err.message });
+    console.error("Unexpected error:", err);
+    res.status(500).json({ error: "Unexpected server error" });
   }
 });
 
@@ -293,7 +275,6 @@ app.get("/dashboard", async (req, res) => {
 
   const message = req.query.message || null;
 
-  // Get user data
   const { data: userdata, error: usererror } = await supabase
     .from("users")
     .select("*")
@@ -301,29 +282,11 @@ app.get("/dashboard", async (req, res) => {
     .single();
 
   if (usererror || !userdata) {
-    console.error("User fetch error:", usererror);
+    console.error("User error:", usererror);
     return res.status(500).send("User data fetch failed.");
   }
 
-  // If no block is assigned, render profile page
-  if (!userdata.block || userdata.block.trim() === "") {
-    const { data: hostels, error: hostelError } = await supabase
-      .from("hostels")
-      .select("hostel_id, hostel_name");
-
-    if (hostelError) {
-      console.error("Hostel data fetch error:", hostelError);
-      return res.status(500).send("Hostel data fetch failed.");
-    }
-
-    return res.render("profile.ejs", {
-      user: req.user,
-      data: hostels,
-    });
-  }
-
-  // Fetch required dashboard data
-  const { data: allHostels, error: hostelsError } = await supabase
+  const { data: data, error: error } = await supabase
     .from("hostels")
     .select("hostel_name");
 
@@ -332,27 +295,25 @@ app.get("/dashboard", async (req, res) => {
     .select("*")
     .eq("hostel_id", userdata.block);
 
-  const { data: userhosteldata, error: userhostelerror } = await supabase
+    const { data: userhosteldata, error: userhostelrerror } = await supabase
     .from("hostels")
     .select("hostel_name")
-    .eq("hostel_id", userdata.block)
-    .single();
+    .eq("hostel_id", userdata.block).single();
 
-  if (hostelsError || floorerror || userhostelerror) {
-    console.error("Dashboard data fetch error:", hostelsError || floorerror || userhostelerror);
-    return res.status(500).send("Dashboard data fetch failed.");
+  if (floorerror) {
+    console.error("Floor data error:", floorerror);
   }
 
-  // Render dashboard
+
   return res.render("dashboard.ejs", {
     user: req.user,
     floordata,
+    userdata,
     userhosteldata,
     message,
-    data: allHostels,
+    data,
   });
 });
-
 
 app.listen(3000, () => {
   console.log("Running on Port 3000!");
