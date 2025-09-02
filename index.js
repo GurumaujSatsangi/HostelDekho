@@ -49,7 +49,7 @@ app.get("/", async (req, res) => {
   res.render("home.ejs", { hosteldata: data });
 });
 
-app.get("/view/hostel/:id", async (req, res) => {
+app.get("/hostel/:id", async (req, res) => {
   const { data, error } = await supabase
     .from("hostels")
     .select("*")
