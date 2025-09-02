@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css">
     <title>Document</title>
   </head>
   <body>
     <%- include('partials/navbar') %>
+    <div class="container">
 <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
   <ol class="breadcrumb mb-0">
     <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">FLOOR PLAN : <%= hosteldata.hostel_name %> - FLOOR <%= floorplan.floor %></li>
   </ol>
 </nav>
-    <div class="container">
 
     <table class="table">
       <tbody>
@@ -28,7 +28,6 @@
     <hr>
 <form action="/fetch-room-details" method="POST">
   <div class="mb-3">
-    <input type="hidden" name="hostelid" value="<%= hosteldata.hostel_id %>">
     <input type="hidden" name="floorid" value="<%= floorplan.id %>">
 
     <label for="roomSelect" class="form-label">Select Room</label>

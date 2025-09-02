@@ -64,27 +64,27 @@ app.get("/hostel/:id", async (req, res) => {
   return res.render("hostel.ejs", { hosteldata: data, floorplan });
 });
 
-app.get("/view/hostel/:hostelid/floor-plan/:planid", async (req, res) => {
-  const { data, error } = await supabase
-    .from("hostels")
-    .select("*")
-    .eq("hostel_id", req.params.hostelid)
-    .single();
+app.get("/floor/:planid", async (req, res) => {
+  // const { data, error } = await supabase
+  //   .from("hostels")
+  //   .select("*")
+  //   .eq("hostel_id", req.params.hostelid)
+  //   .single();
 
   const { data: roomdata, error: roomerror } = await supabase
     .from("floor_plan")
     .select("*")
-    .eq("hostel_id", req.params.hostelid)
+    // .eq("hostel_id", req.params.hostelid)
     .eq("id", req.params.planid);
 
   const { data: floorplan, error: floorplanerror } = await supabase
     .from("floor_plans")
     .select("*")
-    .eq("hostel_id", req.params.hostelid)
+    // .eq("hostel_id", req.params.hostelid)
     .eq("id", req.params.planid)
     .single();
 
-  return res.render("floorplan.ejs", { hosteldata: data, floorplan, roomdata });
+  return res.render("floorplan.ejs", { floorplan, roomdata });
 });
 
 app.post("/fetch-room-details", async (req, res) => {
