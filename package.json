@@ -11,6 +11,8 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@azure/cognitiveservices-computervision": "^8.2.0",
+    "@azure/ms-rest-js": "^2.7.0",
     "@supabase/supabase-js": "^2.52.0",
     "body-parser": "^2.2.0",
     "bootstrap": "^5.3.7",

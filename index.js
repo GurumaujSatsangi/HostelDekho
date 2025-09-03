@@ -4,23 +4,21 @@ import ejs from "ejs";
 import session from "express-session";
 import { fileURLToPath } from "url";
 import path from "path";
-import {v2 as cloudinary} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 
-dotenv.config();
+const app = express();
 
+dotenv.config();
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
-const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -43,66 +41,87 @@ app.use(express.static("public"));
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.get("/", async (req, res) => {
+
+async function getAllHostel() {
   const { data, error } = await supabase.from("hostels").select("*");
 
+  if (error) {
+    console.error("Error fetching hostel:", error);
+    return null;
+  }
+  return data;
+}
+
+async function getHostel(id) {
+  const { data, error } = await supabase
+    .from("hostels")
+    .select("*")
+    .eq("hostel_id", id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching hostel:", error);
+    return null;
+  }
+  return data;
+}
+
+async function getRoom(id) {
+  const { data, error } = await supabase
+    .from("rooms")
+    .select("*")
+    .eq("floor_id", id);
+
+  if (error) {
+    console.error("Error fetching room:", error);
+    return null;
+  }
+  return data;
+}
+
+async function getFloorPlan(id) {
+  const { data, error } = await supabase
+    .from("floor_plans")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching floor plan:", error);
+    return null;
+  }
+  return data;
+}
+
+async function getFloor(id) {
+  const { data, error } = await supabase
+    .from("floor_plans")
+    .select("*")
+    .eq("hostel_id", id);
+
+  if (error) {
+    console.error("Error fetching floor plan:", error);
+    return null;
+  }
+  return data;
+}
+
+app.get("/", async (req, res) => {
+  const data = await getAllHostel();
   res.render("home.ejs", { hosteldata: data });
 });
 
 app.get("/hostel/:id", async (req, res) => {
-  const { data, error } = await supabase
-    .from("hostels")
-    .select("*")
-    .eq("hostel_id", req.params.id)
-    .single();
-
-  const { data: floorplan, error: floorplanerror } = await supabase
-    .from("floor_plans")
-    .select("*")
-    .eq("hostel_id", req.params.id);
-
-  return res.render("hostel.ejs", { hosteldata: data, floorplan });
+  const hosteldata = await getHostel(req.params.id);
+  const floorplan = await getFloor(req.params.id);
+  return res.render("hostel.ejs", { hosteldata, floorplan });
 });
 
-app.get("/floor/:planid", async (req, res) => {
-  // const { data, error } = await supabase
-  //   .from("hostels")
-  //   .select("*")
-  //   .eq("hostel_id", req.params.hostelid)
-  //   .single();
-
-  const { data: roomdata, error: roomerror } = await supabase
-    .from("floor_plan")
-    .select("*")
-    // .eq("hostel_id", req.params.hostelid)
-    .eq("id", req.params.planid);
-
-  const { data: floorplan, error: floorplanerror } = await supabase
-    .from("floor_plans")
-    .select("*")
-    // .eq("hostel_id", req.params.hostelid)
-    .eq("id", req.params.planid)
-    .single();
-
-  return res.render("floorplan.ejs", { floorplan, roomdata });
+app.get("/floor/:floorid", async (req, res) => {
+  const roomdata = await getRoom(req.params.floorid);
+  const floorplan = await getFloorPlan(req.params.floorid);
+  return res.render("floorplan.ejs", { roomdata, floorplan });
 });
-
-app.post("/fetch-room-details", async (req, res) => {
-  const roomid = req.body.roomid;
-  const hostelid = req.body.hostelid;
-  const floorid = req.body.floorid;
-  const { data, error } = await supabase
-    .from("rooms")
-    .select("*")
-    .eq("hostel_id", hostelid)
-    .eq("floor_id", floorid)
-    .eq("room_id", roomid)
-    .single();
-});
-
-
-
-
 
 passport.use(
   "google",
@@ -226,9 +245,9 @@ app.post("/submit-room-details", async (req, res) => {
 
   try {
     const { data, error } = await supabase.from("rooms").insert({
-      hostel_id:hostelid,
+      hostel_id: hostelid,
       floor_id: floorid,
-      submitted_by:req.user.name,
+      submitted_by: req.user.name,
       room_number: roomnumber,
       remarks: remarks,
     });
@@ -248,25 +267,6 @@ app.post("/submit-room-details", async (req, res) => {
     res.status(500).json({ error: "Unexpected server error" });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.get("/dashboard", async (req, res) => {
   if (!req.isAuthenticated()) {
@@ -295,15 +295,15 @@ app.get("/dashboard", async (req, res) => {
     .select("*")
     .eq("hostel_id", userdata.block);
 
-    const { data: userhosteldata, error: userhostelrerror } = await supabase
+  const { data: userhosteldata, error: userhostelrerror } = await supabase
     .from("hostels")
     .select("hostel_name")
-    .eq("hostel_id", userdata.block).single();
+    .eq("hostel_id", userdata.block)
+    .single();
 
   if (floorerror) {
     console.error("Floor data error:", floorerror);
   }
-
 
   return res.render("dashboard.ejs", {
     user: req.user,

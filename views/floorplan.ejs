@@ -3,49 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
+
     <title>Document</title>
   </head>
   <body>
     <%- include('partials/navbar') %>
     <div class="container">
-<nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
-  <ol class="breadcrumb mb-0">
-    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
-  </ol>
-</nav>
+      <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item">
+            <a href="/" class="text-decoration-none">Home</a>
+          </li>
+        </ol>
+      </nav>
 
-    <table class="table">
-      <tbody>
-        
-        <tr>
-          <td><img src="<%= floorplan.link %>" width="50%" height="50%"></img></td>
-        </tr>
-       
-        
-      </tbody>
-    </table>
-    <hr>
-<form action="/fetch-room-details" method="POST">
-  <div class="mb-3">
-    <input type="hidden" name="floorid" value="<%= floorplan.id %>">
+      <div class="card">
+        <div class="card-body">
+          <center>
+            <img src="<%= floorplan.link %>" width="30%" height="30%" />
+          </center>
+        </div>
+      </div>
 
-    <label for="roomSelect" class="form-label">Select Room</label>
-<select class="form-select" required id="roomSelect" name="room_id" aria-label="Room select">
-  <% if (roomdata && roomdata.length > 0) { %>
-    <% roomdata.forEach(roomoptions => { %>
-      <option value="<%= roomoptions.room_id %>"><%= roomoptions.room_number %></option>
-    <% }); %>
-  <% } else { %>
-    <option disabled selected>No rooms available</option>
-  <% } %>
-</select>
+      <hr />
 
-  </div>
- 
- 
-  <input type="submit" value="Fetch" class="btn btn-primary">
-</form>
+      <% if(roomdata && roomdata.length > 0){ %>
+      <div class="row">
+        <% roomdata.forEach(function(room,index){ %>
+        <div class="col-md-3 mb-4">
+          <div class="card h-100">
+            <div class="card-header"><b><%= room.room_number %></b></div>
+            <div class="card-body">
+              <img src="<%= room.image %>" class="img-fluid" />
+              <hr />
+              <p><%= room.speed_test %></p>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <% } else { %>
+      <p>No Rooms available!</p>
+      <% } %>
     </div>
     <%- include('partials/footer') %>
   </body>
