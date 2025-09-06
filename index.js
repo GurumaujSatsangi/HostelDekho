@@ -10,7 +10,6 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
-
 const app = express();
 
 dotenv.config();
@@ -18,6 +17,10 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
+
+
+
+
 const upload = multer({ storage: multer.memoryStorage() });
 app.use(
   session({
@@ -26,6 +29,8 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -52,6 +57,9 @@ async function getAllHostel() {
   return data;
 }
 
+
+
+
 async function getHostel(id) {
   const { data, error } = await supabase
     .from("hostels")
@@ -64,6 +72,21 @@ async function getHostel(id) {
     return null;
   }
   return data;
+}
+
+async function getUserRoom(uid){
+
+
+  const { data, error } = await supabase
+    .from("rooms")
+    .select("*").eq("submitted_by",uid);
+
+  if (error) {
+    console.error("Error fetching room:", error);
+    return null;
+  }
+  return data;
+
 }
 
 async function getRoom(id) {
@@ -243,7 +266,7 @@ app.post("/submit-room-details", async (req, res) => {
     const { data, error } = await supabase.from("rooms").insert({
       hostel_id: hostelid,
       floor_id: floorid,
-      submitted_by: req.user.name,
+      submitted_by: req.user.uid,
       room_number: roomnumber,
       remarks: remarks,
     });
@@ -264,7 +287,6 @@ app.post("/submit-room-details", async (req, res) => {
   }
 });
 
-// main dashboard route
 app.get("/dashboard", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/");
@@ -278,10 +300,14 @@ app.get("/dashboard", async (req, res) => {
     .eq("uid", req.user.uid)
     .single();
 
+  // ✅ check first
   if (usererror || !userdata) {
     console.error("User error:", usererror);
     return res.status(500).send("User data fetch failed.");
   }
+
+  // ✅ only use userdata after confirming it exists
+  const allrooms = await getUserRoom(userdata.uid);
 
   // Get all hostels
   const { data: hostels, error: hostelError } = await supabase
@@ -304,9 +330,11 @@ app.get("/dashboard", async (req, res) => {
     userdata,
     hostels,
     userhosteldata,
-    message
+    message,
+    allrooms
   });
 });
+
 
 // ✅ New API to fetch floors dynamically
 app.get("/floors/:hostelId", async (req, res) => {

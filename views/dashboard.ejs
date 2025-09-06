@@ -14,7 +14,26 @@
     <div class="container">
       <h3>Welcome, <%= userdata.name %>!</h3>
       <hr />
-
+<% if(allrooms.length>0){ %>
+  <% allrooms.forEach(function(allrooms){ %>
+    <table class="table table-striped">
+    <tr>
+      <td colspan="3" style="text-align:center"><h2>Thank You!</h2><p align="center">You have submitted the following details of your room:</p></td>
+    </tr>
+<tr>
+  <td>Room Number</td>
+  <td>Hostel</td>
+  <td>Remarks</td>
+</tr>
+    <tr>
+      <td><%= allrooms.room_number%></td>
+      <td><%= allrooms.hostel_id%></td>
+      <td><%= allrooms.remarks %></td>
+    </tr>
+    </table>
+  <% }) %>
+<% } else { %>
+   
       <form action="/submit-room-details" method="POST">
 
         <table cellpadding="7">
@@ -108,6 +127,7 @@
 
         <input type="submit" value="Submit" class="btn btn-primary" />
       </form>
+<%} %>
     </div>
 
     <%- include('partials/footer') %>
