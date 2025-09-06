@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/style.css" />
-        <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
 
     <title>Hostel Dekho</title>
     <link
@@ -49,24 +49,29 @@
       <hr />
 
       <% if(floorplan && floorplan.length > 0){ %>
-        <div class="row">
-          <% floorplan.forEach(function(floor,index){ %>
-            <div class="col-md-3 mb-4">
-              <div class="card h-100">
-                <div class="card-header"><b><%= floor.floor %></b></div>
-                <div class="card-body">
-                  <img src="<%= floor.link %>" class="img-fluid"/>
-                  <hr />
-                  <a href="/floor/<%= floor.id %>" class="btn btn-primary">
-                    Explore <i class="bi bi-arrow-right-circle-fill"></i>
-                  </a>
-                </div>
-              </div>
+      <div class="row">
+        <% floorplan.forEach(function(floor,index){ %>
+        <div class="col-md-3 mb-4">
+          <div class="card h-100">
+            <div class="card-header"><b><%= floor.floor %></b></div>
+            <div class="card-body">
+              <img
+                src="<%= floor.link %>"
+                width="50%"
+                height="50%"
+                class="img-fluid"
+              />
+              <hr />
+              <a href="/floor/<%= floor.id %>" class="btn btn-primary">
+                Explore <i class="bi bi-arrow-right-circle-fill"></i>
+              </a>
             </div>
-          <% }); %>
+          </div>
         </div>
+        <% }); %>
+      </div>
       <% } else { %>
-        <p>No Floor Plans available!</p>
+      <p>No Floor Plans available!</p>
       <% } %>
     </div>
     <%- include('partials/footer') %>

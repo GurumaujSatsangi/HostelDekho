@@ -129,7 +129,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://hosteldekho.onrender.com/auth/google/dashboard",
+      callbackURL: "http://localhost:3000/auth/google/dashboard",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     async (accessToken, refreshToken, profile, cb) => {
@@ -218,11 +218,7 @@ app.get(
       .single();
     if (!req.isAuthenticated()) {
       return res.redirect("/");
-    } else if (data.block == "") {
-      res.render("profile.ejs", {
-        user: req.user,
-      });
-    } else {
+    }else {
       res.render("dashboard.ejs", {
         user: req.user,
       });
@@ -268,6 +264,7 @@ app.post("/submit-room-details", async (req, res) => {
   }
 });
 
+// main dashboard route
 app.get("/dashboard", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/");
@@ -286,34 +283,52 @@ app.get("/dashboard", async (req, res) => {
     return res.status(500).send("User data fetch failed.");
   }
 
-  const { data: data, error: error } = await supabase
+  // Get all hostels
+  const { data: hostels, error: hostelError } = await supabase
     .from("hostels")
-    .select("hostel_name");
+    .select("hostel_id, hostel_name");
 
-  const { data: floordata, error: floorerror } = await supabase
-    .from("floor_plans")
-    .select("*")
-    .eq("hostel_id", userdata.block);
+  if (hostelError) {
+    console.error("Hostel fetch error:", hostelError);
+  }
 
-  const { data: userhosteldata, error: userhostelrerror } = await supabase
+  // Current user’s hostel (optional)
+  const { data: userhosteldata, error: userhostelerror } = await supabase
     .from("hostels")
     .select("hostel_name")
     .eq("hostel_id", userdata.block)
     .single();
 
-  if (floorerror) {
-    console.error("Floor data error:", floorerror);
-  }
-
   return res.render("dashboard.ejs", {
     user: req.user,
-    floordata,
     userdata,
+    hostels,
     userhosteldata,
-    message,
-    data,
+    message
   });
 });
+
+// ✅ New API to fetch floors dynamically
+app.get("/floors/:hostelId", async (req, res) => {
+  try {
+    const { hostelId } = req.params;
+    const { data: floors, error } = await supabase
+      .from("floor_plans")
+      .select("id, floor")
+      .eq("hostel_id", hostelId);
+
+    if (error) {
+      console.error("Floor fetch error:", error);
+      return res.status(500).json({ error: "Error fetching floors" });
+    }
+
+    res.json(floors);
+  } catch (err) {
+    console.error("Server error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 app.listen(3000, () => {
   console.log("Running on Port 3000!");

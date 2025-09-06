@@ -1,87 +1,116 @@
-<%- include('dashboard/partials/navbar') %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
 
-<div class="container">
-  <div class="alert alert-primary" role="alert">
-    <b>Welcome, <%= user.name %></b> &nbsp;<a
-      href="/logout"
-      class="btn btn-outline-danger"
-      type="button"
-      >Logout</a
-    >
+    <title>Hostel Dekho | Dashboard</title>
+  </head>
+  <body>
+    <%- include('dashboard/partials/navbar') %>
 
-    
-  </div>
-  <table class="table"><tr><td><b>Your Block is <%= userhosteldata.hostel_name %></b></td></tr></table>
-  <form action="/submit-room-details" method="POST">
- 
-<input type="hidden" name="hostelid" value="<%=userdata.block%>">
-    <div class="mb-3">
-      <label for="exampleInputEmail1" class="form-label">Select Floor</label>
-    <select
-        class="form-select"
-        name="floor"
-        aria-label="Default select example"
-      >
-      <% if (floordata && floordata.length > 0) { %>
- <% floordata.forEach(function(floor) { %>
+    <div class="container">
+      <h3>Welcome, <%= userdata.name %>!</h3>
+      <hr />
 
-    <option value="<%= floor.id %>"><%= floor.floor %></option>
-  <% }) %>
-<% } else { %>
-  <option disabled>No floors available</option>
-<% } %>
+      <form action="/submit-room-details" method="POST">
 
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label for="exampleInputPassword1" class="form-label">Room Number</label>
-      <input
-        type="number"
-        class="form-control"
-        name="room_number"
-        id="exampleInputPassword1"
-      />
-    </div>
-
-    <div class="mb-3">
-      <label for="exampleInputPassword1" class="form-label">Speed Test</label>
-      <input
-        type="button"
-        class="form-control"
-        name="speedtest"
-        id="exampleInputPassword1"
-      />
-    </div>
-
-    <div class="mb3">
-      <label for="exampleInputPassword1" class="form-label">Room's Photo</label>
-
-      <div class="input-group mb-3">
-        <input
-          type="file"
-          class="form-control"
-          name="image"
-          id="inputGroupFile02"
-        />
-        <label class="input-group-text" for="inputGroupFile02">Upload</label>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label for="exampleFormControlTextarea1" class="form-label"
-        >Remarks</label
-      >
-      <textarea
-        class="form-control"
-        id="exampleFormControlTextarea1"
-        name="remarks"
-        rows="3"
-      ></textarea>
-    </div>
-
-    <input type="submit" value="submit" class="btn btn-primary" />
-  </form>
+        <table cellpadding="7">
+          <tr>
+            <td>
+  <div class="mb-3">
+  <label for="hostelSelect" class="form-label">Select Hostel</label>
+  <select class="form-select" id="hostelSelect" name="hostel">
+    <% if (hostels && hostels.length > 0) { %>
+      <% hostels.forEach(function(hostel) { %>
+        <option value="<%= hostel.hostel_id %>" 
+          <%= userdata.block === hostel.hostel_id ? "selected" : "" %>>
+          <%= hostel.hostel_name %>
+        </option>
+      <% }) %>
+    <% } else { %>
+      <option disabled>No Hostels available</option>
+    <% } %>
+  </select>
 </div>
+            </td>
+            <td>
+<div class="mb-3">
+  <label for="floorSelect" class="form-label">Select Floor</label>
+  <select class="form-select" id="floorSelect" name="floor">
+    <option disabled selected>Choose a hostel first</option>
+  </select>
+</div>
+            </td>
+            <td rowspan="3">
+<center><img height="90%" class="rounded" src="/hostels.png">   </center>         </td>
+          </tr>
+          <tr>
+            <td>
+ <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label"
+            >Room Number</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="room_number"
+            id="exampleInputPassword1"
+          />
+        </div>
+            </td>
+            <td>
+ <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label"
+            >Speed Test</label
+          >
+          <input
+            type="button"
+            class="form-control"
+            name="speedtest"
+            id="exampleInputPassword1"
+          />
+        </div>
 
- <%- include('partials/footer') %>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+               <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label"
+            >Remarks</label
+          >
+          <textarea
+            class="form-control"
+            id="exampleFormControlTextarea1"
+            name="remarks"
+            rows="3"
+          ></textarea>
+        </div>
+            </td>
+          </tr>
+        </table>
+
+      
+
+
+
+
+
+
+       
+
+       
+
+       
+
+        <input type="submit" value="Submit" class="btn btn-primary" />
+      </form>
+    </div>
+
+    <%- include('partials/footer') %>
+    <script src="/script.js"></script>
+  </body>
+</html>
