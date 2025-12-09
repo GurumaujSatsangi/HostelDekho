@@ -13,41 +13,37 @@
   </head>
   <body>
     <%- include('partials/navbar') %> 
-     <div class="container">
+    <main class="page-shell">
+      <section class="hero">
+        <h1 style="margin: 0 0 8px;">Discover hostels with a clean, dark dashboard.</h1>
+        <p class="muted" style="margin: 0;">Browse available blocks, view floor plans, and drill into rooms — now with a Supabase-style dark UI.</p>
+      </section>
 
-     <% if(hosteldata && hosteldata.length>0){
-    %>
-
-   
-      <div class="row">
-        <% hosteldata.forEach(function(hostel, index) { %>
-        <div class="col-md-3 mb-4">
-          <div class="card h-100">
-            <div class="card-header"><b><%= hostel.hostel_name %></b></div>
-            <div class="card-body">
-              <p class="card-text">
-                <span class="badge text-bg-info"
-                  ><%= hostel.hostel_type %>
-                </span>
-                <span class="badge text-bg-info"
-                  ><%= hostel.bed_availability %></span
-                >
-                <span class="badge text-bg-info"><%= hostel.bed_type %></span>
-              </p>
-              <hr />
-              <a
-                href="/hostel/<%= hostel.hostel_id %>"
-                class="btn btn-primary"
-              >
+      <% if(hosteldata && hosteldata.length>0){ %>
+      <div class="layout-grid">
+        <% hosteldata.forEach(function(hostel) { %>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="card-title"><%= hostel.hostel_name %></p>
+                <p class="card-description">Type: <%= hostel.hostel_type %></p>
+              </div>
+              <span class="chip"><%= hostel.bed_type %></span>
+            </div>
+            <div class="card-content">
+              <div class="inline-actions">
+                <span class="pill-muted">Bedrooms: <%= hostel.bed_availability %></span>
+              </div>
+              <a href="/hostel/<%= hostel.hostel_id %>" class="btn btn-primary" style="width: fit-content;">
                 Explore <i class="bi bi-arrow-right-circle-fill"></i>
               </a>
             </div>
           </div>
-        </div>
         <% }); %>
       </div>
-    </div>
+      <% } %>
+    </main>
 
-    <% } %> <%- include('partials/footer') %>
+    <%- include('partials/footer') %>
   </body>
 </html>

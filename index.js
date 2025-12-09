@@ -6,20 +6,22 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import dotenv from "dotenv";
-import { createClient } from "@supabase/supabase-js";
-const app = express();
+  import passport from "passport";
+  import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+  import dotenv from "dotenv";
+  import { createClient } from "@supabase/supabase-js";
+  import SpeedTest from '@cloudflare/speedtest';
+import axios from 'axios';
+import crypto from 'crypto';
+import Stream from 'stream';
 
-dotenv.config();
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
+  const app = express();
 
-
-
+  dotenv.config();
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+  );
 
 const upload = multer({ storage: multer.memoryStorage() });
 app.use(
@@ -287,56 +289,75 @@ app.post("/submit-room-details", async (req, res) => {
   }
 });
 
-app.get("/dashboard", async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.redirect("/");
-  }
+app.get("/api/speedtest", async (req, res) => {
+    // Ensure user is logged in to access this API
+    if (!req.isAuthenticated()) {
+        return res.status(401).json({ error: "Not authenticated" });
+    }
 
-  const message = req.query.message || null;
+    console.log("Running speed test via API...");
+    const [downloadSpeed, uploadSpeed] = await Promise.all([
+        testDownload(),
+        testUpload()
+    ]);
+    console.log(`API Speeds found: ${downloadSpeed} Mbps Down, ${uploadSpeed} Mbps Up`);
 
-  const { data: userdata, error: usererror } = await supabase
-    .from("users")
-    .select("*")
-    .eq("uid", req.user.uid)
-    .single();
-
-  // ✅ check first
-  if (usererror || !userdata) {
-    console.error("User error:", usererror);
-    return res.status(500).send("User data fetch failed.");
-  }
-
-  // ✅ only use userdata after confirming it exists
-  const allrooms = await getUserRoom(userdata.uid);
-
-  // Get all hostels
-  const { data: hostels, error: hostelError } = await supabase
-    .from("hostels")
-    .select("hostel_id, hostel_name");
-
-  if (hostelError) {
-    console.error("Hostel fetch error:", hostelError);
-  }
-
-  // Current user’s hostel (optional)
-  const { data: userhosteldata, error: userhostelerror } = await supabase
-    .from("hostels")
-    .select("hostel_name")
-    .eq("hostel_id", userdata.block)
-    .single();
-
-  return res.render("dashboard.ejs", {
-    user: req.user,
-    userdata,
-    hostels,
-    userhosteldata,
-    message,
-    allrooms
-  });
+    // Return results as JSON
+    res.json({ downloadSpeed, uploadSpeed });
 });
 
 
-// ✅ New API to fetch floors dynamically
+// ===============================================
+// YOUR MODIFIED DASHBOARD ROUTE
+// ===============================================
+app.get("/dashboard", async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect("/");
+    }
+
+    // --- Speed test logic has been REMOVED from this route ---
+
+    const message = req.query.message || null;
+
+    const { data: userdata, error: usererror } = await supabase
+        .from("users")
+        .select("*")
+        .eq("uid", req.user.uid)
+        .single();
+
+    if (usererror || !userdata) {
+        console.error("User error:", usererror);
+        return res.status(500).send("User data fetch failed.");
+    }
+
+    const allrooms = await getUserRoom(userdata.uid);
+
+    const { data: hostels, error: hostelError } = await supabase
+        .from("hostels")
+        .select("hostel_id, hostel_name");
+
+    if (hostelError) {
+        console.error("Hostel fetch error:", hostelError);
+    }
+
+    const { data: userhosteldata, error: userhostelerror } = await supabase
+        .from("hostels")
+        .select("hostel_name")
+        .eq("hostel_id", userdata.block)
+        .single();
+
+    // Note: downloadSpeed and uploadSpeed are no longer passed here
+    return res.render("dashboard.ejs", {
+        user: req.user,
+        userdata,
+        hostels,
+        userhosteldata,
+        message,
+        allrooms
+    });
+});
+
+
 app.get("/floors/:hostelId", async (req, res) => {
   try {
     const { hostelId } = req.params;
@@ -356,6 +377,131 @@ app.get("/floors/:hostelId", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+// Speed test API endpoint
+app.get("/api/speedtest", async (req, res) => {
+  try {
+    console.log("Running speed test via API...");
+    
+    const downloadSpeed = await testDownload(25_000_000); // 25 MB
+    const uploadSpeed = await testUpload(10_000_000); // 10 MB
+    
+    console.log(`Speed test completed - Download: ${downloadSpeed} Mbps, Upload: ${uploadSpeed} Mbps`);
+    
+    res.json({
+      success: true,
+      downloadSpeed: parseFloat(downloadSpeed),
+      uploadSpeed: parseFloat(uploadSpeed),
+      unit: "Mbps"
+    });
+  } catch (error) {
+    console.error("Speed test failed:", error);
+    res.status(500).json({
+      success: false,
+      error: "Speed test failed",
+      downloadSpeed: 0,
+      uploadSpeed: 0
+    });
+  }
+});
+
+
+const BASE_URL = 'https://speed.cloudflare.com';
+
+/**
+ * Calculates speed in Mbps.
+ * @param {number} bytes - The number of bytes transferred.
+ * @param {number} seconds - The duration of the transfer in seconds.
+ * @returns {string} - The speed formatted to two decimal places.
+ */
+function calculateMbps(bytes, seconds) {
+    if (seconds === 0) return '0.00';
+    // Formula: (Bytes / seconds) * 8 = bits per second
+    // Then divide by 1,000,000 for Mbps
+    return ((bytes * 8) / seconds / 1_000_000).toFixed(2);
+}
+
+/**
+ * Performs a download test.
+ * @param {number} bytesToDownload - The size of the payload to download in bytes.
+ * @returns {Promise<string>} - A promise that resolves with the download speed in Mbps.
+ */
+async function testDownload(bytesToDownload = 25_000_000) {
+    console.log(`\nTesting download with ${bytesToDownload / 1_000_000} MB...`);
+    const url = `${BASE_URL}/__down?bytes=${bytesToDownload}`;
+
+    const startTime = process.hrtime.bigint();
+
+    try {
+        const response = await axios.get(url, { responseType: 'stream' });
+        const stream = response.data;
+        
+        // Wait for the stream to finish downloading
+        await new Promise((resolve, reject) => {
+            stream.on('end', resolve);
+            stream.on('error', reject);
+            // Consume the stream to ensure data is downloaded
+            stream.pipe(new Stream.Writable({ write(chunk, encoding, callback) { callback(); } }));
+        });
+
+        const endTime = process.hrtime.bigint();
+        const durationInSeconds = Number(endTime - startTime) / 1e9; // Convert nanoseconds to seconds
+
+        console.log(`Download finished in ${durationInSeconds.toFixed(2)} seconds.`);
+        return calculateMbps(bytesToDownload, durationInSeconds);
+
+    } catch (error) {
+        console.error('Download test failed:', error.message);
+        return '0.00';
+    }
+}
+
+/**
+ * Performs an upload test.
+ * @param {number} bytesToUpload - The size of the payload to upload in bytes.
+ * @returns {Promise<string>} - A promise that resolves with the upload speed in Mbps.
+ */
+async function testUpload(bytesToUpload = 10_000_000) {
+    console.log(`\nTesting upload with ${bytesToUpload / 1_000_000} MB...`);
+    const url = `${BASE_URL}/__up`;
+    const data = crypto.randomBytes(bytesToUpload); // Generate random data
+
+    const startTime = process.hrtime.bigint();
+
+    try {
+        await axios.post(url, data, {
+            headers: { 'Content-Type': 'application/octet-stream' }
+        });
+
+        const endTime = process.hrtime.bigint();
+        const durationInSeconds = Number(endTime - startTime) / 1e9;
+
+        console.log(`Upload finished in ${durationInSeconds.toFixed(2)} seconds.`);
+        return calculateMbps(bytesToUpload, durationInSeconds);
+
+    } catch (error) {
+        console.error('Upload test failed:', error.message);
+        return '0.00';
+    }
+}
+
+/**
+ * Main function to run the speed tests.
+ */
+async function runSpeedTest() {
+    console.log('--- Starting Cloudflare Speed Test ---');
+
+    const downloadSpeed = await testDownload(25_000_000); // 25 MB
+    console.log(`➡️  Download Speed: ${downloadSpeed} Mbps`);
+
+    const uploadSpeed = await testUpload(10_000_000); // 10 MB
+    console.log(`⬆️  Upload Speed: ${uploadSpeed} Mbps`);
+    
+    console.log('\n--- Test Complete ---');
+}
+
+
+
 
 
 app.listen(3000, () => {

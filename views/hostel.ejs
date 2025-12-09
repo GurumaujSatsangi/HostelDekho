@@ -14,66 +14,51 @@
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <div class="container">
-      <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
-        <ol class="breadcrumb mb-0">
-          <li class="breadcrumb-item">
-            <a href="/" class="text-decoration-none">Home</a>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            <%= hosteldata.hostel_name %>
-          </li>
-        </ol>
-      </nav>
-
-      <h4>BLOCK DETAILS</h4>
-      <hr />
-      <table class="table">
-        <tbody>
-          <tr>
-            <td><b>Hostel</b></td>
-            <td><b>Type</b></td>
-            <td><b>Type of Bedrooms Available</b></td>
-            <td><b>Bed Type</b></td>
-          </tr>
-          <tr>
-            <td><%= hosteldata.hostel_name %></td>
-            <td><%= hosteldata.hostel_type %></td>
-            <td><%= hosteldata.bed_availability %></td>
-            <td><%= hosteldata.bed_type %></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h4>FLOOR PLANS</h4>
-      <hr />
-
-      <% if(floorplan && floorplan.length > 0){ %>
-      <div class="row">
-        <% floorplan.forEach(function(floor,index){ %>
-        <div class="col-md-3 mb-4">
-          <div class="card h-100">
-            <div class="card-header"><b><%= floor.floor %></b></div>
-            <div class="card-body">
-              <img
-                src="<%= floor.link %>"
-                width="50%"
-                height="50%"
-                class="img-fluid"
-              />
-              <hr />
-              <a href="/floor/<%= floor.id %>" class="btn btn-primary">
-                Explore <i class="bi bi-arrow-right-circle-fill"></i>
-              </a>
-            </div>
+    <main class="page-shell">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <p class="card-title" style="margin:0;">Hostel Details</p>
+            <p class="card-description">Home / <%= hosteldata.hostel_name %></p>
           </div>
+          <span class="chip"><%= hosteldata.hostel_type %></span>
         </div>
-        <% }); %>
+        <div class="table-subtle">
+          <table class="table">
+            <tbody>
+              <tr><th>Hostel</th><td><%= hosteldata.hostel_name %></td></tr>
+              <tr><th>Type</th><td><%= hosteldata.hostel_type %></td></tr>
+              <tr><th>Bedrooms Available</th><td><%= hosteldata.bed_availability %></td></tr>
+              <tr><th>Bed Type</th><td><%= hosteldata.bed_type %></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <% } else { %>
-      <p>No Floor Plans available!</p>
-      <% } %>
-    </div>
+
+      <div class="card">
+        <div class="card-header">
+          <p class="card-title" style="margin:0;">Floor Plans</p>
+          <span class="pill-muted">Overview</span>
+        </div>
+        <% if(floorplan && floorplan.length > 0){ %>
+          <div class="layout-grid">
+            <% floorplan.forEach(function(floor){ %>
+              <div class="card">
+                <div class="card-header">
+                  <p class="card-title" style="margin:0;">Floor <%= floor.floor %></p>
+                </div>
+                <div class="card-content">
+                  <img src="<%= floor.link %>" class="img-fluid" style="width:100%;" />
+                  <a href="/floor/<%= floor.id %>" class="btn btn-primary" style="width: fit-content;">Explore <i class="bi bi-arrow-right-circle-fill"></i></a>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <p class="muted">No Floor Plans available!</p>
+        <% } %>
+      </div>
+    </main>
     <%- include('partials/footer') %>
   </body>
 </html>

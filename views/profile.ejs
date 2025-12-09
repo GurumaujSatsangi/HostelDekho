@@ -1,34 +1,28 @@
 <%- include('dashboard/partials/navbar') %>
 
-<div class="container">
-  <div class="alert alert-primary" role="alert">
-    <b>Welcome, <%= user.name %></b> &nbsp;<a
-      href="/logout"
-      class="btn btn-outline-danger"
-      type="button"
-      >Logout</a
-    >
-  </div>
-  <form action="/update-profile" method="POST">
-    <div class="mb-3">
-      <label for="exampleInputEmail1" class="form-label">Select Block</label>
-
-      <select
-        class="form-select"
-        name="block"
-        aria-label="Default select example"
-      >
-        <% data.forEach(function(hosteldata) { %>
-        <option value="<%= hosteldata.hostel_id %>">
-          <%= hosteldata.hostel_name %>
-        </option>
-        <% }); %>
-      </select>
+<main class="page-shell">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <p class="card-title" style="margin:0;">Welcome, <%= user.name %></p>
+        <p class="card-description">Update your preferred block.</p>
+      </div>
     </div>
-
-  
-    <input type="submit" value="Set Profile" class="btn btn-primary" />
-  </form>
-</div>
+    <form action="/update-profile" method="POST" class="card-content">
+      <div>
+        <label for="blockSelect" class="form-label">Select Block</label>
+        <select class="form-select" id="blockSelect" name="block" aria-label="Select block">
+          <% data.forEach(function(hosteldata) { %>
+            <option value="<%= hosteldata.hostel_id %>"><%= hosteldata.hostel_name %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="inline-actions">
+        <input type="submit" value="Set Profile" class="btn btn-primary" />
+        <a href="/logout" class="btn btn-outline">Logout</a>
+      </div>
+    </form>
+  </div>
+</main>
 
 <%- include('partials/footer') %>

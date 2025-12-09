@@ -10,44 +10,41 @@
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <div class="container">
-      <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
-        <ol class="breadcrumb mb-0">
-          <li class="breadcrumb-item">
-            <a href="/" class="text-decoration-none">Home</a>
-          </li>
-        </ol>
-      </nav>
+    <main class="page-shell">
+      <div class="card">
+        <div class="card-header">
+          <p class="card-title" style="margin:0;">Floor Plan</p>
+          <span class="pill-muted">Overview</span>
+        </div>
+        <div class="card-content" style="align-items:center;">
+          <img src="<%= floorplan.link %>" style="max-width: 420px; width:100%;" class="img-fluid" />
+        </div>
+      </div>
 
       <div class="card">
-        <div class="card-body">
-          <center>
-            <img src="<%= floorplan.link %>" width="30%" height="30%" />
-          </center>
+        <div class="card-header">
+          <p class="card-title" style="margin:0;">Rooms</p>
+          <span class="pill-muted"><%= roomdata && roomdata.length ? roomdata.length : 0 %> listed</span>
         </div>
-      </div>
-
-      <hr />
-
-      <% if(roomdata && roomdata.length > 0){ %>
-      <div class="row">
-        <% roomdata.forEach(function(room,index){ %>
-        <div class="col-md-3 mb-4">
-          <div class="card h-100">
-            <div class="card-header"><b><%= room.room_number %></b></div>
-            <div class="card-body">
-              <img src="<%= room.image %>" class="img-fluid" />
-              <hr />
-              <p><%= room.speed_test %></p>
-            </div>
+        <% if(roomdata && roomdata.length > 0){ %>
+          <div class="layout-grid">
+            <% roomdata.forEach(function(room){ %>
+              <div class="card">
+                <div class="card-header">
+                  <p class="card-title" style="margin:0;">Room <%= room.room_number %></p>
+                </div>
+                <div class="card-content">
+                  <img src="<%= room.image %>" class="img-fluid" />
+                  <p class="muted-small">Speed Test: <%= room.speed_test || 'N/A' %></p>
+                </div>
+              </div>
+            <% }); %>
           </div>
-        </div>
-        <% }); %>
+        <% } else { %>
+          <p class="muted">No Rooms available!</p>
+        <% } %>
       </div>
-      <% } else { %>
-      <p>No Rooms available!</p>
-      <% } %>
-    </div>
+    </main>
     <%- include('partials/footer') %>
   </body>
 </html>

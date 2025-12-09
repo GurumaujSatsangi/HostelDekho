@@ -10,127 +10,190 @@
   </head>
   <body>
     <%- include('dashboard/partials/navbar') %>
-
-    <div class="container">
-      <h3>Welcome, <%= userdata.name %>!</h3>
-      <hr />
-<% if(allrooms.length>0){ %>
-  <% allrooms.forEach(function(allrooms){ %>
-    <table class="table table-striped">
-    <tr>
-      <td colspan="3" style="text-align:center"><h2>Thank You!</h2><p align="center">You have submitted the following details of your room:</p></td>
-    </tr>
-<tr>
-  <td>Room Number</td>
-  <td>Hostel</td>
-  <td>Remarks</td>
-</tr>
-    <tr>
-      <td><%= allrooms.room_number%></td>
-      <td><%= allrooms.hostel_id%></td>
-      <td><%= allrooms.remarks %></td>
-    </tr>
-    </table>
-  <% }) %>
-<% } else { %>
-   
-      <form action="/submit-room-details" method="POST">
-
-        <table cellpadding="7">
-          <tr>
-            <td>
-  <div class="mb-3">
-  <label for="hostelSelect" class="form-label">Select Hostel</label>
-  <select class="form-select" id="hostelSelect" name="hostel">
-    <% if (hostels && hostels.length > 0) { %>
-      <% hostels.forEach(function(hostel) { %>
-        <option value="<%= hostel.hostel_id %>" 
-          <%= userdata.block === hostel.hostel_id ? "selected" : "" %>>
-          <%= hostel.hostel_name %>
-        </option>
-      <% }) %>
-    <% } else { %>
-      <option disabled>No Hostels available</option>
-    <% } %>
-  </select>
-</div>
-            </td>
-            <td>
-<div class="mb-3">
-  <label for="floorSelect" class="form-label">Select Floor</label>
-  <select class="form-select" id="floorSelect" name="floor">
-    <option disabled selected>Choose a hostel first</option>
-  </select>
-</div>
-            </td>
-            <td rowspan="3">
-<center><img height="90%" class="rounded" src="/hostels.png">   </center>         </td>
-          </tr>
-          <tr>
-            <td>
- <div class="mb-3">
-          <label for="exampleInputPassword1" class="form-label"
-            >Room Number</label
-          >
-          <input
-            type="number"
-            class="form-control"
-            name="room_number"
-            id="exampleInputPassword1"
-          />
+    <main class="page-shell">
+      <div class="card" style="padding: 18px 24px;">
+        <div class="card-header">
+          <div>
+            <p class="card-title" style="margin:0;">Welcome, <%= userdata.name %>!</p>
+            <% if(message){ %><p class="card-description"><%= message %></p><% } %>
+          </div>
+          <div class="inline-actions">
+            <span class="pill-muted">Dashboard</span>
+          </div>
         </div>
-            </td>
-            <td>
- <div class="mb-3">
-          <label for="exampleInputPassword1" class="form-label"
-            >Speed Test</label
-          >
-          <input
-            type="button"
-            class="form-control"
-            name="speedtest"
-            id="exampleInputPassword1"
-          />
+      </div>
+
+      <% if(allrooms.length > 0) { %>
+        <% allrooms.forEach(function(allrooms){ %>
+          <div class="card">
+            <div class="card-header">
+              <p class="card-title" style="margin:0;">Submission Received</p>
+              <span class="pill-success">Room saved</span>
+            </div>
+            <div class="table-subtle">
+              <table class="table">
+                <tbody>
+                  <tr><th>Room Number</th><td><%= allrooms.room_number%></td></tr>
+                  <tr><th>Hostel</th><td><%= allrooms.hostel_id%></td></tr>
+                  <tr><th>Remarks</th><td><%= allrooms.remarks %></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+      <div class="layout-3col">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="card-title" style="margin:0;">Room Details</p>
+              <p class="card-description">Submit your room and speed details.</p>
+            </div>
+          </div>
+          <form action="/submit-room-details" method="POST" class="card-content">
+            <div class="layout-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px,1fr));">
+              <div>
+                <label for="hostelSelect" class="form-label">Select Hostel</label>
+                <select class="form-select" id="hostelSelect" name="hostel">
+                  <% if (hostels && hostels.length > 0) { %>
+                    <% hostels.forEach(function(hostel) { %>
+                      <option value="<%= hostel.hostel_id %>" <%= userdata.block === hostel.hostel_id ? "selected" : "" %>>
+                        <%= hostel.hostel_name %>
+                      </option>
+                    <% }) %>
+                  <% } else { %>
+                    <option disabled>No Hostels available</option>
+                  <% } %>
+                </select>
+              </div>
+              <div>
+                <label for="floorSelect" class="form-label">Select Floor</label>
+                <select class="form-select" id="floorSelect" name="floor">
+                  <option disabled selected>Choose a hostel first</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="layout-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px,1fr));">
+              <div>
+                <label for="roomNumber" class="form-label">Room Number</label>
+                <input type="number" class="form-control" name="room_number" id="roomNumber" />
+              </div>
+              <div>
+                <label class="form-label">Download Speed</label>
+                <div class="pill-muted" id="download-speed-display">--x-- Mbps</div>
+              </div>
+              <div>
+                <label class="form-label">Upload Speed</label>
+                <div class="pill-muted" id="upload-speed-display">--x-- Mbps</div>
+              </div>
+            </div>
+
+            <div class="muted-small" id="speed-status">Running speed test...</div>
+
+            <div>
+              <label for="remarks" class="form-label">Remarks</label>
+              <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
+            </div>
+
+            <input type="hidden" name="download_speed" id="download-speed-input" value="" />
+            <input type="hidden" name="upload_speed" id="upload-speed-input" value="" />
+
+            <div class="inline-actions">
+              <input type="submit" value="Submit" class="btn btn-primary" />
+              <button type="button" class="btn btn-outline" id="rerun-speed">Re-run speed test</button>
+            </div>
+          </form>
         </div>
 
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-               <div class="mb-3">
-          <label for="exampleFormControlTextarea1" class="form-label"
-            >Remarks</label
-          >
-          <textarea
-            class="form-control"
-            id="exampleFormControlTextarea1"
-            name="remarks"
-            rows="3"
-          ></textarea>
+        <div class="card">
+          <div class="card-header">
+            <p class="card-title" style="margin:0;">No Team Members</p>
+            <span class="pill-muted">0 invited</span>
+          </div>
+          <p class="muted">Invite your teammates to collaborate on room submissions and reviews.</p>
+          <div class="avatar-stack" style="margin-top:8px;">
+            <span class="avatar">A</span><span class="avatar">B</span><span class="avatar">C</span>
+            <span class="pill-muted" style="margin-left:12px;">+ Add</span>
+          </div>
+          <div class="inline-actions" style="margin-top:14px;">
+            <button class="btn btn-primary" type="button">Invite Members</button>
+          </div>
         </div>
-            </td>
-          </tr>
-        </table>
 
-      
+        <div class="small-card-stack">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="card-title" style="margin:0;">Two-factor authentication</p>
+                <p class="card-description">Add another layer of security to your account.</p>
+              </div>
+            </div>
+            <button class="btn btn-outline" type="button">Enable</button>
+          </div>
 
+          <div class="card">
+            <div class="card-header">
+              <p class="card-title" style="margin:0;">Verification status</p>
+              <a class="arrow-link" href="#">Review <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <p class="muted-small">Complete your verification steps to unlock all features.</p>
+          </div>
 
-
-
-
-
-       
-
-       
-
-       
-
-        <input type="submit" value="Submit" class="btn btn-primary" />
-      </form>
-<%} %>
-    </div>
+          <div class="card">
+            <div class="card-header">
+              <p class="card-title" style="margin:0;">Compute environment</p>
+              <span class="status-dot"></span>
+            </div>
+            <p class="muted-small">HostelDekho services are running smoothly.</p>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </main>
 
     <%- include('partials/footer') %>
     <script src="/script.js"></script>
+
+    <script>
+        function runSpeedTestAndUpdate() {
+          const downloadDisplay = document.getElementById('download-speed-display');
+          const uploadDisplay = document.getElementById('upload-speed-display');
+          const statusElement = document.getElementById('speed-status');
+          const downloadInput = document.getElementById('download-speed-input');
+          const uploadInput = document.getElementById('upload-speed-input');
+
+          statusElement.textContent = 'Running speed test...';
+          fetch('/api/speedtest')
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  downloadDisplay.textContent = `${data.downloadSpeed} Mbps`;
+                  uploadDisplay.textContent = `${data.uploadSpeed} Mbps`;
+                  downloadInput.value = data.downloadSpeed;
+                  uploadInput.value = data.uploadSpeed;
+                  statusElement.textContent = 'Speed test complete.';
+              })
+              .catch(error => {
+                  console.error('Error fetching speed test results:', error);
+                  downloadDisplay.textContent = 'Error';
+                  uploadDisplay.textContent = 'Error';
+                  statusElement.textContent = 'Could not complete speed test.';
+              });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const rerunBtn = document.getElementById('rerun-speed');
+            if (rerunBtn) {
+              rerunBtn.addEventListener('click', runSpeedTestAndUpdate);
+            }
+            runSpeedTestAndUpdate();
+        });
+    </script>
   </body>
 </html>
+
