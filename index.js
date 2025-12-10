@@ -4,6 +4,7 @@ import ejs from "ejs";
 import session from "express-session";
 import { fileURLToPath } from "url";
 import path from "path";
+import { Profanity, CensorType } from '@2toad/profanity';
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
   import passport from "passport";
@@ -22,6 +23,12 @@ import Stream from 'stream';
     process.env.SUPABASE_URL,
     process.env.SUPABASE_KEY
   );
+
+const profanity = new Profanity({
+    languages: ['en', 'hi'],
+});
+
+profanity.addWords(['chutiya', 'madarchod', 'bhosdike','maa ki chut','behanchod','behenchod']);
 
 const upload = multer({ storage: multer.memoryStorage() });
 app.use(
