@@ -16,6 +16,7 @@
     "@cloudflare/speedtest": "^1.6.0",
     "@supabase/supabase-js": "^2.52.0",
     "axios": "^1.12.2",
+    "bad-words": "^4.0.0",
     "body-parser": "^2.2.0",
     "bootstrap": "^5.3.7",
     "cloudflare": "^5.1.0",

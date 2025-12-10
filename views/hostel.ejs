@@ -81,16 +81,64 @@
       <div class="card">
           <div class="card-header">
             <p class="card-title" style="margin:0;">Reviews</p>
+            <p class="muted"><a href="">SUBMIT REVIEW</a></p>
           </div>
             <% if(reviews && reviews.length > 0){ %>
               <% reviews.forEach(function(reviews){ %>
                 
                   <div class="card">
                     <div class="card-header">
+                      <% if(reviews.jio_speed === 'Poor' || reviews.jio_speed==='Very Poor') { %>
+                      <span class="chip-no">Jio Connection : <%=reviews.jio_speed %></span>
+
+                        <% } else if(reviews.jio_speed === 'Good') { %>
+                      <span class="chip-mid">Jio Connection : <%=reviews.jio_speed %></span>
+
+                          <% } else { %>
                       <span class="chip">Jio Connection : <%=reviews.jio_speed %></span>
+
+                          <% } %>
+
+
+
+                          <% if(reviews.airtel_speed === 'Poor' || reviews.airtel_speed==='Very Poor') { %>
+                      <span class="chip-no">Airtel Connection : <%=reviews.airtel_speed %></span>
+
+                        <% } else if(reviews.airtel_speed === 'Good') { %>
+                      <span class="chip-mid">Airtel Connection : <%=reviews.airtel_speed %></span>
+
+                          <% } else { %>
                       <span class="chip">Airtel Connection : <%=reviews.airtel_speed %></span>
+
+                          <% } %>
+
+
+
+                          <% if(reviews.vit_wifi_speed === 'Poor' || reviews.vit_wifi_speed==='Very Poor') { %>
+                      <span class="chip-no">VIT Wifi Connection : <%=reviews.vit_wifi_speed %></span>
+
+                        <% } else if(reviews.vit_wifi_speed === 'Good') { %>
+                      <span class="chip-mid">VIT Wifi Connection : <%=reviews.vit_wifi_speed %></span>
+
+                          <% } else { %>
                       <span class="chip">VIT Wifi Connection : <%=reviews.vit_wifi_speed %></span>
+
+                          <% } %>
+
+
+                           <% if(reviews.cleaniless_score <= 2) { %>
+                      <span class="chip-no">Cleanliness : <%=reviews.cleaniless_score %></span>
+
+                        <% } else if(reviews.cleaniless_score == 3) { %>
+                      <span class="chip-mid">Cleanliness : <%=reviews.cleaniless_score %></span>
+
+                          <% } else { %>
                       <span class="chip">Cleanliness : <%=reviews.cleaniless_score %></span>
+
+                          <% } %>
+
+
+
 
 
                     </div>
