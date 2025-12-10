@@ -148,6 +148,10 @@ app.get("/floor/:floorid", async (req, res) => {
   return res.render("floorplan.ejs", { roomdata, floorplan });
 });
 
+app.get("/floor-plan", (req, res) => {
+  res.render("mh-floor-plan.ejs");
+});
+
 passport.use(
   "google",
   new GoogleStrategy(

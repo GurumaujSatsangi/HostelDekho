@@ -14,11 +14,7 @@
   <body>
     <%- include('partials/navbar') %> 
     <main class="page-shell">
-      <section class="hero">
-        <h1 style="margin: 0 0 8px;">Discover hostels with a clean, dark dashboard.</h1>
-        <p class="muted" style="margin: 0;">Browse available blocks, view floor plans, and drill into rooms — now with a Supabase-style dark UI.</p>
-      </section>
-
+      
       <% if(hosteldata && hosteldata.length>0){ %>
       <div class="layout-grid">
         <% hosteldata.forEach(function(hostel) { %>

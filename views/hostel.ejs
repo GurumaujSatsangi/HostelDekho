@@ -18,27 +18,19 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <p class="card-title" style="margin:0;">Hostel Details</p>
-            <p class="card-description">Home / <%= hosteldata.hostel_name %></p>
+            <p class="card-description"><a href="/">Home</a> / <%= hosteldata.hostel_name %></p>
           </div>
           <span class="chip"><%= hosteldata.hostel_type %></span>
+          <span class="chip"><%= hosteldata.bed_availability %></span>
+          <span class="chip"><%= hosteldata.bed_type %></span>
+
         </div>
-        <div class="table-subtle">
-          <table class="table">
-            <tbody>
-              <tr><th>Hostel</th><td><%= hosteldata.hostel_name %></td></tr>
-              <tr><th>Type</th><td><%= hosteldata.hostel_type %></td></tr>
-              <tr><th>Bedrooms Available</th><td><%= hosteldata.bed_availability %></td></tr>
-              <tr><th>Bed Type</th><td><%= hosteldata.bed_type %></td></tr>
-            </tbody>
-          </table>
-        </div>
+      
       </div>
 
       <div class="card">
         <div class="card-header">
           <p class="card-title" style="margin:0;">Floor Plans</p>
-          <span class="pill-muted">Overview</span>
         </div>
         <% if(floorplan && floorplan.length > 0){ %>
           <div class="layout-grid">
@@ -48,7 +40,7 @@
                   <p class="card-title" style="margin:0;">Floor <%= floor.floor %></p>
                 </div>
                 <div class="card-content">
-                  <img src="<%= floor.link %>" class="img-fluid" style="width:100%;" />
+                  <img src="<%= floor.link %>" class="img-fluid" style="width:100%;"/>
                   <a href="/floor/<%= floor.id %>" class="btn btn-primary" style="width: fit-content;">Explore <i class="bi bi-arrow-right-circle-fill"></i></a>
                 </div>
               </div>
