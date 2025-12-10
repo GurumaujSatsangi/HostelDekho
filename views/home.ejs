@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/style.css" />
-    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
     <title>Hostel Dekho</title>
     <link
       rel="stylesheet"
@@ -12,29 +12,33 @@
     />
   </head>
   <body>
-    <%- include('partials/navbar') %> 
+    <%- include('partials/navbar') %>
     <main class="page-shell">
-      
       <% if(hosteldata && hosteldata.length>0){ %>
       <div class="layout-grid">
         <% hosteldata.forEach(function(hostel) { %>
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <p class="card-title"><%= hostel.hostel_name %></p>
-                <p class="card-description">Type: <%= hostel.hostel_type %></p>
-              </div>
-              <span class="chip"><%= hostel.bed_type %></span>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="card-title"><%= hostel.hostel_name %></p>
             </div>
-            <div class="card-content">
-              <div class="inline-actions">
-                <span class="pill-muted">Bedrooms: <%= hostel.bed_availability %></span>
-              </div>
-              <a href="/hostel/<%= hostel.hostel_id %>" class="btn btn-primary" style="width: fit-content;">
-                Explore <i class="bi bi-arrow-right-circle-fill"></i>
-              </a>
-            </div>
+            <span class="chip"><%= hostel.bed_availability %></span>
+            <span class="chip"><%= hostel.hostel_type %></span>
+            <span class="chip"><%= hostel.bed_type %></span>
+            <span class="chip"
+              >Chota Dhobi Facility : <%= hostel.chota_dhobi_facility %></span
+            >
           </div>
+          <div class="card-content">
+            <a
+              href="/hostel/<%= hostel.hostel_id %>"
+              class="btn btn-primary"
+              style="width: fit-content"
+            >
+              Explore <i class="bi bi-arrow-right-circle-fill"></i>
+            </a>
+          </div>
+        </div>
         <% }); %>
       </div>
       <% } %>
