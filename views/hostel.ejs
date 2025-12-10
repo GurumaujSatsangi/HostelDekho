@@ -11,6 +11,19 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
+    <style>
+      /* Accordion styles for floor plans */
+      .accordion-item { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+      .accordion-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; cursor:pointer; background: rgba(255,255,255,0.01); }
+      .accordion-header:focus { outline: 2px solid rgba(34,197,94,0.12); }
+      .accordion-header .card-title { margin:0; font-weight:600; }
+      .accordion-chev { transition: transform .2s ease; color: var(--text-dim); }
+      .accordion-item.open .accordion-chev { transform: rotate(90deg); color: var(--accent); }
+      .accordion-panel { display:none; padding:16px; background: linear-gradient(145deg, #0f121a, #0f1318); }
+      .accordion-panel.open { display:block; }
+      .accordion-panel img { width:100%; border-radius:10px; border:1px solid rgba(255,255,255,0.02); }
+      .accordion-actions { margin-top:12px; display:flex; gap:12px; }
+    </style>
   </head>
   <body>
     <%- include('partials/navbar') %>
@@ -25,32 +38,96 @@
           <span class="chip"><%= hosteldata.bed_type %></span>
 
         </div>
-      
+        <hr>
+      <table class="table-subtle">
+  <tr>
+    <td><b>Mess Caterer</b></td>
+    <td colspan="3"><b>Mess Floors</b></td>
+    <td><b>Badminton Court</b></td>
+    <td><b>Chota Dhobi Facility</b></td>
+
+  </tr>
+  <tr>
+<td><%= hosteldata.mess_caterer %></td>
+<td>VEG MESS:<br><%= hosteldata.veg_mess_floor %></td>
+
+<td>NON VEG MESS:<br><%= hosteldata.non_veg_mess_floor %></td>
+
+<td>SPECIAL MESS:<br><%= hosteldata.special_mess_floor %></td>
+<td><%= hosteldata.badminton_court %></td>
+<td><%= hosteldata.chota_dhobi_facility %></td>
+
+
+  </tr>
+</table>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          <p class="card-title" style="margin:0;">Floor Plans</p>
-        </div>
-        <% if(floorplan && floorplan.length > 0){ %>
-          <div class="layout-grid">
-            <% floorplan.forEach(function(floor){ %>
-              <div class="card">
-                <div class="card-header">
-                  <p class="card-title" style="margin:0;">Floor <%= floor.floor %></p>
-                </div>
-                <div class="card-content">
-                  <img src="<%= floor.link %>" class="img-fluid" style="width:100%;"/>
-                  <a href="/floor/<%= floor.id %>" class="btn btn-primary" style="width: fit-content;">Explore <i class="bi bi-arrow-right-circle-fill"></i></a>
-                </div>
-              </div>
-            <% }); %>
+          <div class="card-header">
+            <p class="card-title" style="margin:0;">Floor Plans</p>
+            <p class="muted">(Click on a specific floor to view floor plan)</p>
           </div>
-        <% } else { %>
-          <p class="muted">No Floor Plans available!</p>
-        <% } %>
+          <% if(floorplan && floorplan.length > 0){ %>
+              <% floorplan.forEach(function(floor){ %>
+              <span class="chip"><a href="<%=floor.link%>">Floor: <%=floor.floor %></a></span>
+
+              <% }); %>
+          <% } else { %>
+            <p class="muted">No Floor Plans available!</p>
+          <% } %>
       </div>
+
+
+      <div class="card">
+          <div class="card-header">
+            <p class="card-title" style="margin:0;">Reviews</p>
+          </div>
+          
+            <p class="muted">No Reviews available!</p>
+      </div>
+
+
+
     </main>
+    <script>
+      (function(){
+        function initAccordion(){
+          const headers = document.querySelectorAll('.accordion-header');
+          headers.forEach(header => {
+            const targetId = header.dataset.target;
+            const panel = document.getElementById(targetId);
+            header.setAttribute('role', 'button');
+            header.setAttribute('aria-expanded', 'false');
+            if(panel) panel.setAttribute('aria-hidden', 'true');
+
+            header.addEventListener('click', () => toggle(header, panel));
+            header.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(header, panel); }
+            });
+          });
+        }
+
+        function toggle(header, panel){
+          const item = header.closest('.accordion-item');
+          const willOpen = !item.classList.contains('open');
+          item.classList.toggle('open', willOpen);
+          header.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+          if(panel){
+            panel.classList.toggle('open', willOpen);
+            panel.setAttribute('aria-hidden', willOpen ? 'false' : 'true');
+            if(willOpen){
+              const imgs = panel.querySelectorAll('img[data-src].lazy-floor');
+              imgs.forEach(img => { if(!img.src) img.src = img.dataset.src; });
+              const focusable = panel.querySelector('a, button, input, [tabindex]');
+              if(focusable) focusable.focus();
+            }
+          }
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAccordion);
+        else initAccordion();
+      })();
+    </script>
     <%- include('partials/footer') %>
   </body>
 </html>
