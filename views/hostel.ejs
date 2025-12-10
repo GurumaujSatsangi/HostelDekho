@@ -82,9 +82,29 @@
           <div class="card-header">
             <p class="card-title" style="margin:0;">Reviews</p>
           </div>
-          
-            <p class="muted">No Reviews available!</p>
-      </div>
+            <% if(reviews && reviews.length > 0){ %>
+              <% reviews.forEach(function(reviews){ %>
+                
+                  <div class="card">
+                    <div class="card-header">
+                      <span class="chip">Jio Connection : <%=reviews.jio_speed %></span>
+                      <span class="chip">Airtel Connection : <%=reviews.airtel_speed %></span>
+                      <span class="chip">VIT Wifi Connection : <%=reviews.vit_wifi_speed %></span>
+                      <span class="chip">Cleanliness : <%=reviews.cleaniless_score %></span>
+
+
+                    </div>
+                    <%=reviews.remarks %>
+                  </div>
+
+              <% }); %>
+          <% } else { %>
+            <p class="muted">No Floor Plans available!</p>
+          <% } %>
+                  </div>
+               
+              
+
 
 
 

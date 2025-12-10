@@ -93,9 +93,9 @@ async function getUserRoom(uid){
 
 async function getRoom(id) {
   const { data, error } = await supabase
-    .from("rooms")
+    .from("reviews")
     .select("*")
-    .eq("floor_id", id);
+    .eq("hostel_id", id);
 
   if (error) {
     console.error("Error fetching room:", error);
@@ -139,7 +139,8 @@ app.get("/", async (req, res) => {
 app.get("/hostel/:id", async (req, res) => {
   const hosteldata = await getHostel(req.params.id);
   const floorplan = await getFloor(req.params.id);
-  return res.render("hostel.ejs", { hosteldata, floorplan });
+  const reviews = await getRoom(req.params.id);
+  return res.render("hostel.ejs", { hosteldata, floorplan, reviews });
 });
 
 app.get("/floor/:floorid", async (req, res) => {
