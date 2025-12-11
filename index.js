@@ -102,7 +102,7 @@ async function getRoom(id) {
   const { data, error } = await supabase
     .from("reviews")
     .select("*")
-    .eq("hostel_id", id);
+    .eq("floor_id", id);
 
   if (error) {
     console.error("Error fetching room:", error);
@@ -151,13 +151,17 @@ app.get("/hostel/:id", async (req, res) => {
 });
 
 app.get("/floor/:floorid", async (req, res) => {
+  
   const roomdata = await getRoom(req.params.floorid);
   const floorplan = await getFloorPlan(req.params.floorid);
-  return res.render("floorplan.ejs", { roomdata, floorplan });
+  const hostel = await getHostel(floorplan.hostel_id);
+
+  return res.render("floorplan.ejs", { roomdata, floorplan,hostel });
 });
 
-app.get("/floor-plan", (req, res) => {
-  res.render("mh-floor-plan.ejs");
+app.get("/review/:id", async (req, res) => {
+  const hostel = await getHostel(req.params.id);
+  res.render("review.ejs",{hostel});
 });
 
 passport.use(

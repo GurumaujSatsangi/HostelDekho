@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
+
+    <title>Document</title>
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+    <main class="page-shell">
+      <div class="card">
+        <div class="card-header">
+          <p class="card-title">ADD YOUR ROOM</p>
+          <span class="chip"><%=hostel.hostel_name %></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <form action="/add-your-room" method="POST">
+          <table class="table-subtle">
+            <tr>
+              <td>Room Number</td>
+              <td>
+                <input type="text" />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Condition of <b><u>Jio</u></b> Network
+              </td>
+              <td>
+                <select class="form-select" aria-label="Default select example">
+                  <option value="1">Very Poor</option>
+                  <option value="2">Poor</option>
+                  <option value="3">Good</option>
+                  <option value="3">Very Good</option>
+
+                  <option value="3">Excellent</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Condition of <b><u>Airtel</u></b> Network
+              </td>
+              <td>
+                <select class="form-select" aria-label="Default select example">
+                  <option value="1">Very Poor</option>
+                  <option value="2">Poor</option>
+                  <option value="3">Good</option>
+                  <option value="3">Very Good</option>
+
+                  <option value="3">Excellent</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>Cleanliness</td>
+              <td>
+                <input type="number" value="0" min="1" max="5" />
+              </td>
+            </tr>
+            <tr>
+              <td>Remarks</td>
+              <td><input type="text" /></td>
+            </tr>
+            <tr>
+              <td colspan="2"><input type="submit" value="Submit" /></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </main>
+    <%- include('partials/footer') %>
+  </body>
+</html>

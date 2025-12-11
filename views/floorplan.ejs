@@ -13,7 +13,8 @@
     <main class="page-shell">
       <div class="card">
         <div class="card-header">
-          <p class="card-title" style="margin:0;">Floor Plan</p>
+          <p class="card-title" style="margin:0;"><%=hostel.hostel_name %></p>
+          <span class="chip">Floor: <%=floorplan.floor%></span>
         </div>
         <div class="card-content" style="align-items:center;">
           <img src="<%= floorplan.link %>" style="max-width: 420px; width:100%;" class="img-fluid" />
@@ -23,22 +24,52 @@
       <div class="card">
         <div class="card-header">
           <p class="card-title" style="margin:0;">Rooms</p>
-          <span class="pill-muted"><%= roomdata && roomdata.length ? roomdata.length : 0 %> listed</span>
+                      <p class="muted"><a href="/review/<%=hostel.hostel_id%>"><i class="bi bi-plus-square-dotted"></i>&nbsp; ADD YOUR ROOM</a></p>
+
         </div>
         <% if(roomdata && roomdata.length > 0){ %>
-          <div class="layout-grid">
             <% roomdata.forEach(function(room){ %>
               <div class="card">
-                <div class="card-header">
-                  <p class="card-title" style="margin:0;">Room <%= room.room_number %></p>
-                </div>
-                <div class="card-content">
-                  <img src="<%= room.image %>" class="img-fluid" />
-                  <p class="muted-small">Speed Test: <%= room.speed_test || 'N/A' %></p>
-                </div>
-              </div>
+                                <div class="card-header">
+
+                <div class=card-title><%= room.room_number %></div>
+</div>
+                 <% if(room.jio_speed === 'Poor' || room.jio_speed==='Very Poor') { %>
+                      <span class="chip-no"><img src="Jio Connection : <%=room.jio_speed %></span>
+
+                        <% } else if(room.jio_speed === 'Good') { %>
+                      <span class="chip-mid">Jio Connection : <%=room.jio_speed %></span>
+
+                          <% } else { %>
+                      <span class="chip">Jio Connection : <%=room.jio_speed %></span>
+
+                          <% } %>
+
+
+                          <% if(room.airtel_speed === 'Poor' || room.airtel_speed==='Very Poor') { %>
+                      <span class="chip-no">Airtel Connection : <%=room.airtel_speed %></span>
+
+                        <% } else if(room.airtel_speed === 'Good') { %>
+                      <span class="chip-mid">Airtel Connection : <%=room.airtel_speed %></span>
+
+                          <% } else { %>
+                      <span class="chip">Airtel Connection : <%=room.airtel_speed %></span>
+
+                          <% } %>
+
+                          <% if(room.vit_wifi_speed === 'Poor' || room.vit_wifi_speed==='Very Poor') { %>
+                      <span class="chip-no">VIT Wifi Connection : <%=room.vit_wifi_speed %></span>
+
+                        <% } else if(room.vit_wifi_speed === 'Good') { %>
+                      <span class="chip-mid">VIT Wifi Connection : <%=room.vit_wifi_speed %></span>
+
+                          <% } else { %>
+                      <span class="chip">VIT Wifi Connection : <%=room.vit_wifi_speed %></span>
+
+                          <% } %>
+</div>
+
             <% }); %>
-          </div>
         <% } else { %>
           <p class="muted">No Rooms available!</p>
         <% } %>

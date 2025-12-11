@@ -69,7 +69,7 @@
           </div>
           <% if(floorplan && floorplan.length > 0){ %>
               <% floorplan.forEach(function(floor){ %>
-              <span class="chip"><a href="<%=floor.link%>">Floor: <%=floor.floor %></a></span>
+              <span class="chip"><a href="/floor/<%=floor.id%>">Floor: <%=floor.floor %></a></span>
 
               <% }); %>
           <% } else { %>
