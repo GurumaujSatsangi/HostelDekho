@@ -24,7 +24,7 @@
             <tr>
               <td>Room Number</td>
               <td>
-                <input type="text" />
+                <input class="form-control" type="text" required />
               </td>
             </tr>
             <tr>
@@ -32,7 +32,7 @@
                 Condition of <b><u>Jio</u></b> Network
               </td>
               <td>
-                <select class="form-select" aria-label="Default select example">
+                <select required class="form-select" aria-label="Default select example">
                   <option value="1">Very Poor</option>
                   <option value="2">Poor</option>
                   <option value="3">Good</option>
@@ -47,7 +47,22 @@
                 Condition of <b><u>Airtel</u></b> Network
               </td>
               <td>
-                <select class="form-select" aria-label="Default select example">
+                <select required class="form-select" aria-label="Default select example">
+                  <option value="1">Very Poor</option>
+                  <option value="2">Poor</option>
+                  <option value="3">Good</option>
+                  <option value="3">Very Good</option>
+
+                  <option value="3">Excellent</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+                 <td>
+                Condition of <b><u>VIT Wifi</u></b>
+              </td>
+              <td>
+                <select required class="form-select" aria-label="Default select example">
                   <option value="1">Very Poor</option>
                   <option value="2">Poor</option>
                   <option value="3">Good</option>
@@ -60,15 +75,15 @@
             <tr>
               <td>Cleanliness</td>
               <td>
-                <input type="number" value="0" min="1" max="5" />
+                <input class="form-control" required type="number" value="0" min="1" max="5" />
               </td>
             </tr>
             <tr>
               <td>Remarks</td>
-              <td><input type="text" /></td>
+              <td><input class="form-control" required type="text" /></td>
             </tr>
             <tr>
-              <td colspan="2"><input type="submit" value="Submit" /></td>
+              <td colspan="2"><input type="submit" class="chip" value="Submit" /></td>
             </tr>
           </table>
         </form>
