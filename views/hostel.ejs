@@ -78,6 +78,57 @@
       </div>
 
 
+      <div class="card">
+          <div class="card-header">
+            <p class="card-title" style="margin:0;">Room Details</p>
+          </div>
+          <% if(roomdetails && roomdetails.length > 0){ %>
+              <% roomdetails.forEach(function(roomdetails){ %>
+<table  class="subtle">
+  <tr>
+    <td colspan="2">
+<center><%=roomdetails.room_type %> Occupancy Room</center>
+    </td>
+    <td>
+      <span class="chip" onclick="showRoomImage()">VIEW ROOM</span>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <center>Price with : </center>
+    </td>
+
+  </tr>
+  <tr>
+  <td>
+    Veg Mess
+  </td>
+  <td>
+    Non Veg Mess
+  </td>
+  <td>
+    Special Mess
+  </td>
+</tr>
+<tr>
+  <td>
+    <%=roomdetails.price_veg %>
+  </td>
+    <td>
+    <%=roomdetails.price_non_veg %>
+  </td>
+    <td>
+    <%=roomdetails.price_special %>
+  </td>
+</tr>
+</table>
+              <% }); %>
+          <% } else { %>
+            <p class="muted">No Room Details available!</p>
+          <% } %>
+      </div>
+
+
       
                
               
