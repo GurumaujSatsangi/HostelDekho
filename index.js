@@ -155,13 +155,22 @@ app.get("/floor/:floorid", async (req, res) => {
   const roomdata = await getRoom(req.params.floorid);
   const floorplan = await getFloorPlan(req.params.floorid);
   const hostel = await getHostel(floorplan.hostel_id);
-
+  
   return res.render("floorplan.ejs", { roomdata, floorplan,hostel });
 });
 
-app.get("/review/:id", async (req, res) => {
-  const hostel = await getHostel(req.params.id);
-  res.render("review.ejs",{hostel});
+app.get("/review/:floorId", async (req, res) => {
+  const floorplan = await getFloorPlan(req.params.floorId);
+  if (!floorplan) {
+    return res.status(404).send("Floor plan not found");
+  }
+
+  const hostel = await getHostel(floorplan.hostel_id);
+  if (!hostel) {
+    return res.status(404).send("Hostel not found");
+  }
+
+  res.render("review.ejs", { hostel, floorplan });
 });
 
 passport.use(
@@ -277,14 +286,16 @@ app.get("/logout", (req, res) => {
 });
 
 app.post("/submit-room-details", async (req, res) => {
-  const { hostelid, floorid, remarks, roomnumber } = req.body;
-  const image = req.file;
+  const { hostelid, floorid, remarks, roomnumber,jio,airtel,vit,cleanliness } = req.body;
 
   try {
-    const { data, error } = await supabase.from("rooms").insert({
+    const { data, error } = await supabase.from("reviews").insert({
       hostel_id: hostelid,
       floor_id: floorid,
-      submitted_by: req.user.uid,
+      airtel_speed:airtel,
+      jio_speed:jio,
+      vit_wifi_speed:vit,
+      cleaniless_score:cleanliness,
       room_number: roomnumber,
       remarks: remarks,
     });
