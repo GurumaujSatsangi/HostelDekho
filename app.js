@@ -202,9 +202,8 @@ app.post("/submit-room-details", async (req, res) => {
         .json({ error: "Database insert failed", details: error.message });
     }
 
-    res.redirect(
-      "/dashboard?message=Room Details have beed added successfully!"
-    );
+   res.redirect("/floor/" + floorid + "?message=Room Details have been added successfully!");
+
   } catch (err) {
     console.error("Unexpected error:", err);
     res.status(500).json({ error: "Unexpected server error" });
