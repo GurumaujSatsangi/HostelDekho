@@ -4,14 +4,10 @@ import ejs from "ejs";
 import session from "express-session";
 import { fileURLToPath } from "url";
 import path from "path";
-import { Profanity, CensorType } from '@2toad/profanity';
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
-  import passport from "passport";
-  import { Strategy as GoogleStrategy } from "passport-google-oauth20";
   import dotenv from "dotenv";
   import { createClient } from "@supabase/supabase-js";
-  import SpeedTest from '@cloudflare/speedtest';
 import axios from 'axios';
 import crypto from 'crypto';
 import Stream from 'stream';
@@ -24,20 +20,9 @@ import Stream from 'stream';
     process.env.SUPABASE_KEY
   );
 
-const profanity = new Profanity({
-    languages: ['en', 'hi'],
-});
 
-profanity.addWords(['chutiya', 'madarchod', 'bhosdike','maa ki chut','behanchod','behenchod']);
 
 const upload = multer({ storage: multer.memoryStorage() });
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
 
 
 
@@ -53,8 +38,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 async function getAllHostel() {
   const { data, error } = await supabase.from("hostels").select("*");
@@ -186,117 +170,15 @@ app.get("/review/:floorId", async (req, res) => {
   res.render("review.ejs", { hostel, floorplan });
 });
 
-passport.use(
-  "google",
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/dashboard",
-      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
-    },
-    async (accessToken, refreshToken, profile, cb) => {
-      try {
-        const result = await supabase
-          .from("users")
-          .select("*")
-          .eq("uid", profile.id)
-          .single();
-        let user;
-        if (!result.data) {
-          const { error } = await supabase.from("users").insert([
-            {
-              uid: profile.id,
-              name: profile.displayName,
-              email: profile.emails[0].value,
-              profile_picture: profile.photos[0].value,
-            },
-          ]);
-          if (error) {
-            console.error("Error inserting user:", error);
-            return cb(error);
-          }
-          const { data: newUser, error: fetchError } = await supabase
-            .from("users")
-            .select("*")
-            .eq("uid", profile.id)
-            .single();
-          if (fetchError) {
-            console.error("Fetch after insert failed:", fetchError);
-            return cb(fetchError);
-          }
-          user = newUser;
-        } else {
-          user = result.data;
-        }
 
-        return cb(null, user);
-      } catch (err) {
-        return cb(err);
-      }
-    }
-  )
-);
 
-app.get(
-  "/auth/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
-);
 
-app.post("/update-profile", async (req, res) => {
-  const block = req.body.block;
-  await supabase.from("users").update({ block: block }).eq("uid", req.user.uid);
-  res.redirect("/dashboard");
-});
 
-app.get("/update-profile", async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.redirect("/");
-  }
-  const { data, error } = await supabase.from("hostels").select("hostel_name");
-  const { data: profiledata, error: profileerror } = await supabase
-    .from("users")
-    .select("*")
-    .eq("email", req.user.email)
-    .single();
-  if (!profiledata || !profiledata.block || profiledata.block.length === 0) {
-    res.render("profile.ejs", { data, user: req.user });
-  } else {
-    res.render("dashboard.ejs", { data, user: req.user });
-  }
-});
-app.get(
-  "/auth/google/dashboard",
-  passport.authenticate("google", {
-    failureRedirect: "/",
-    successRedirect: "/dashboard",
-  }),
-  async (req, res) => {
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", req.user.email)
-      .single();
-    if (!req.isAuthenticated()) {
-      return res.redirect("/");
-    }else {
-      res.render("dashboard.ejs", {
-        user: req.user,
-      });
-    }
-  }
-);
 
-app.get("/logout", (req, res) => {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
-});
+
+
+
+
 
 app.post("/submit-room-details", async (req, res) => {
   const { hostelid, floorid, remarks, roomnumber,jio,airtel,vit,cleanliness } = req.body;
@@ -540,18 +422,11 @@ async function runSpeedTest() {
     console.log('\n--- Test Complete ---');
 }
 
+const PORT = process.env.PORT || 3000;
 
 
 
-
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("Running on Port 3000!");
 });
 
-passport.serializeUser((user, cb) => {
-  cb(null, user);
-});
-
-passport.deserializeUser((user, cb) => {
-  cb(null, user);
-});
