@@ -211,73 +211,10 @@ app.post("/submit-room-details", async (req, res) => {
   }
 });
 
-app.get("/api/speedtest", async (req, res) => {
-    // Ensure user is logged in to access this API
-    if (!req.isAuthenticated()) {
-        return res.status(401).json({ error: "Not authenticated" });
-    }
-
-    console.log("Running speed test via API...");
-    const [downloadSpeed, uploadSpeed] = await Promise.all([
-        testDownload(),
-        testUpload()
-    ]);
-    console.log(`API Speeds found: ${downloadSpeed} Mbps Down, ${uploadSpeed} Mbps Up`);
-
-    // Return results as JSON
-    res.json({ downloadSpeed, uploadSpeed });
-});
 
 
-// ===============================================
-// YOUR MODIFIED DASHBOARD ROUTE
-// ===============================================
-app.get("/dashboard", async (req, res) => {
-    if (!req.isAuthenticated()) {
-        return res.redirect("/");
-    }
 
-    // --- Speed test logic has been REMOVED from this route ---
 
-    const message = req.query.message || null;
-
-    const { data: userdata, error: usererror } = await supabase
-        .from("users")
-        .select("*")
-        .eq("uid", req.user.uid)
-        .single();
-
-    if (usererror || !userdata) {
-        console.error("User error:", usererror);
-        return res.status(500).send("User data fetch failed.");
-    }
-
-    const allrooms = await getUserRoom(userdata.uid);
-
-    const { data: hostels, error: hostelError } = await supabase
-        .from("hostels")
-        .select("hostel_id, hostel_name");
-
-    if (hostelError) {
-        console.error("Hostel fetch error:", hostelError);
-    }
-
-    const { data: userhosteldata, error: userhostelerror } = await supabase
-        .from("hostels")
-        .select("hostel_name")
-        .eq("hostel_id", userdata.block)
-        .single();
-
-    // Note: downloadSpeed and uploadSpeed are no longer passed here
-    return res.render("dashboard.ejs", {
-        user: req.user,
-        userdata,
-        hostels,
-        userhosteldata,
-        message,
-        allrooms
-    });
-});
 
 
 app.get("/floors/:hostelId", async (req, res) => {
