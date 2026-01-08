@@ -33,9 +33,7 @@ if (process.env.REDIS_HOST && process.env.REDIS_HOST.trim() !== '') {
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT) || 6379,
       tls: true,
-      rejectUnauthorized: false // AWS ElastiCache uses self-signed certs
-    },
-    socket: {
+      rejectUnauthorized: false, // AWS ElastiCache uses self-signed certs
       reconnectStrategy: (retries) => {
         if (retries > 10) {
           console.error('❌ Redis: Max reconnection attempts reached');
@@ -87,6 +85,25 @@ async function getMostViewedPage() {
     return null;
   } catch (err) {
     console.error('Error getting most viewed page:', err.message);
+    return null;
+  }
+}
+
+// Helper function to get the most viewed hostel
+async function getMostViewedHostel() {
+  try {
+    if (!redisClient || !redisClient.isReady) return null;
+    
+    const result = await redisClient.zRevRangeWithScores('hostelViews', 0, 0);
+    if (result && result.length > 0) {
+      return {
+        hostelId: result[0].value,
+        views: result[0].score
+      };
+    }
+    return null;
+  } catch (err) {
+    console.error('Error getting most viewed hostel:', err.message);
     return null;
   }
 }
@@ -241,11 +258,25 @@ app.get("/hostel/:id", async (req, res) => {
   const reviews = await getRoom(req.params.id);
   const roomdetails = await getRoomDetails(req.params.id);
   
+  // Track this specific hostel view in Redis
+  try {
+    if (redisClient && redisClient.isReady) {
+      await redisClient.zIncrBy('hostelViews', 1, req.params.id);
+      console.log(`✅ Cached hostel view for hostel ID: ${req.params.id}`);
+    }
+  } catch (err) {
+    console.error('Error caching hostel view:', err.message);
+  }
+  
   // Check if this is the most viewed page
   const mostViewed = await getMostViewedPage();
   const isTrending = mostViewed && mostViewed.path === req.path;
   
-  return res.render("hostel.ejs", { hosteldata, floorplan, reviews, roomdetails, isTrending });
+  // Check if this is the most viewed hostel
+  const mostViewedHostel = await getMostViewedHostel();
+  const isHostelTrending = mostViewedHostel && mostViewedHostel.hostelId === req.params.id;
+  
+  return res.render("hostel.ejs", { hosteldata, floorplan, reviews, roomdetails, isTrending: isTrending || isHostelTrending });
 });
 
 app.get("/floor/:floorid", async (req, res) => {
