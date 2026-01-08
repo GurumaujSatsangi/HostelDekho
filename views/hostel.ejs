@@ -56,12 +56,15 @@
   <body>
     <%- include('partials/navbar') %>
     <main class="page-shell">
+     
       
       <% if (typeof isTrending !== 'undefined' && isTrending) { %>
-      <div class="trending-banner">
-        <span class="trending-icon">🔥</span>
-        <span>This Hostel is being viewed the most right now!</span>
-      </div>
+
+          <div class="card">
+          <i class="bi bi-fire"></i> <% hosteldata.hostel_name %> is among the TOP hostels that are being right now! 
+        </div>
+       
+
       <% } %>
       <div class="card">
         <div class="card-header">
