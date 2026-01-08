@@ -11,6 +11,7 @@ import multer from "multer";
 import axios from 'axios';
 import crypto from 'crypto';
 import Stream from 'stream';
+import { createClient as createRedisClient } from 'redis';
 
   const app = express();
 
@@ -19,6 +20,76 @@ import Stream from 'stream';
     process.env.SUPABASE_URL,
     process.env.SUPABASE_KEY
   );
+
+// Redis client configuration with TLS for AWS ElastiCache
+// Only initialize Redis if REDIS_HOST is configured (production environment)
+let redisClient = null;
+
+if (process.env.REDIS_HOST && process.env.REDIS_HOST.trim() !== '') {
+  console.log('🔧 Redis configuration detected, initializing client...');
+  
+  redisClient = createRedisClient({
+    socket: {
+      host: process.env.REDIS_HOST,
+      port: parseInt(process.env.REDIS_PORT) || 6379,
+      tls: true,
+      rejectUnauthorized: false // AWS ElastiCache uses self-signed certs
+    },
+    socket: {
+      reconnectStrategy: (retries) => {
+        if (retries > 10) {
+          console.error('❌ Redis: Max reconnection attempts reached');
+          return new Error('Max reconnection attempts reached');
+        }
+        return Math.min(retries * 100, 3000);
+      }
+    }
+  });
+
+  // Redis error handling
+  redisClient.on('error', (err) => {
+    console.error('❌ Redis Client Error:', err.message);
+  });
+
+  redisClient.on('connect', () => {
+    console.log('✅ Redis connected successfully');
+  });
+
+  redisClient.on('ready', () => {
+    console.log('✅ Redis client ready');
+  });
+
+  // Connect to Redis
+  (async () => {
+    try {
+      await redisClient.connect();
+    } catch (err) {
+      console.error('❌ Failed to connect to Redis:', err.message);
+      console.log('⚠️  App will continue without Redis (trending feature disabled)');
+    }
+  })();
+} else {
+  console.log('ℹ️  Redis not configured - running in local mode (trending feature disabled)');
+}
+
+// Helper function to get the most viewed page
+async function getMostViewedPage() {
+  try {
+    if (!redisClient || !redisClient.isReady) return null;
+    
+    const result = await redisClient.zRevRangeWithScores('pageViews', 0, 0);
+    if (result && result.length > 0) {
+      return {
+        path: result[0].value,
+        views: result[0].score
+      };
+    }
+    return null;
+  } catch (err) {
+    console.error('Error getting most viewed page:', err.message);
+    return null;
+  }
+}
 
 
 
@@ -37,6 +108,26 @@ const __dirname = path.dirname(__filename);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
+
+// Page view tracking middleware
+app.use(async (req, res, next) => {
+  try {
+    // Only track GET requests to actual pages (not static assets or API endpoints)
+    if (req.method === 'GET' && 
+        !req.path.startsWith('/api/') && 
+        !req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf)$/)) {
+      
+      if (redisClient && redisClient.isReady) {
+        // Increment page view count
+        await redisClient.zIncrBy('pageViews', 1, req.path);
+      }
+    }
+  } catch (err) {
+    console.error('Error tracking page view:', err.message);
+    // Don't crash the app on Redis errors
+  }
+  next();
+});
 
 
 
@@ -136,7 +227,12 @@ async function getFloor(id) {
 
 app.get("/", async (req, res) => {
   const data = await getAllHostel();
-  res.render("home.ejs", { hosteldata: data });
+  
+  // Check if this is the most viewed page
+  const mostViewed = await getMostViewedPage();
+  const isTrending = mostViewed && mostViewed.path === req.path;
+  
+  res.render("home.ejs", { hosteldata: data, isTrending });
 });
 
 app.get("/hostel/:id", async (req, res) => {
@@ -144,7 +240,12 @@ app.get("/hostel/:id", async (req, res) => {
   const floorplan = await getFloor(req.params.id);
   const reviews = await getRoom(req.params.id);
   const roomdetails = await getRoomDetails(req.params.id);
-  return res.render("hostel.ejs", { hosteldata, floorplan, reviews,roomdetails });
+  
+  // Check if this is the most viewed page
+  const mostViewed = await getMostViewedPage();
+  const isTrending = mostViewed && mostViewed.path === req.path;
+  
+  return res.render("hostel.ejs", { hosteldata, floorplan, reviews, roomdetails, isTrending });
 });
 
 app.get("/floor/:floorid", async (req, res) => {
@@ -153,7 +254,11 @@ app.get("/floor/:floorid", async (req, res) => {
   const floorplan = await getFloorPlan(req.params.floorid);
   const hostel = await getHostel(floorplan.hostel_id);
   
-  return res.render("floorplan.ejs", { roomdata, floorplan,hostel });
+  // Check if this is the most viewed page
+  const mostViewed = await getMostViewedPage();
+  const isTrending = mostViewed && mostViewed.path === req.path;
+  
+  return res.render("floorplan.ejs", { roomdata, floorplan, hostel, isTrending });
 });
 
 app.get("/review/:floorId", async (req, res) => {
@@ -167,7 +272,11 @@ app.get("/review/:floorId", async (req, res) => {
     return res.status(404).send("Hostel not found");
   }
 
-  res.render("review.ejs", { hostel, floorplan });
+  // Check if this is the most viewed page
+  const mostViewed = await getMostViewedPage();
+  const isTrending = mostViewed && mostViewed.path === req.path;
+
+  res.render("review.ejs", { hostel, floorplan, isTrending });
 });
 
 
