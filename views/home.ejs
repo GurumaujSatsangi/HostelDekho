@@ -10,45 +10,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
-    <style>
-      /* Trending banner styles */
-      .trending-banner {
-        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-        color: white;
-        padding: 16px 24px;
-        border-radius: 12px;
-        margin: 20px 0;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-        animation: pulse 2s ease-in-out infinite;
-      }
-      .trending-icon {
-        font-size: 24px;
-        animation: bounce 1s ease-in-out infinite;
-      }
-      @keyframes pulse {
-        0%, 100% { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
-        50% { box-shadow: 0 4px 20px rgba(34, 197, 94, 0.5); }
-      }
-      @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-      }
-    </style>
+
   </head>
   <body>
     <%- include('partials/navbar') %>
     <main class="page-shell">
       
-      <% if (typeof isTrending !== 'undefined' && isTrending) { %>
-      <div class="trending-banner">
-        <span class="trending-icon">🔥</span>
-        <span>This page is being viewed the most right now!</span>
-      </div>
-      <% } %>
       
       <% if(hosteldata && hosteldata.length>0){ %>
         <% hosteldata.forEach(function(hostel) { %>
@@ -82,7 +49,9 @@
         </div>
         <% }); %>
      
-      <% } %>
+      <% } else {  %>
+<h1>Coming Soon! <i class="bi bi-emoji-heart-eyes-fill"></i></h1>
+        <% } %>
     </main>
 
     <%- include('partials/footer') %>
