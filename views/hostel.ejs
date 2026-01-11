@@ -194,8 +194,34 @@
           <% if(similarhostels && similarhostels.length > 0){ %>
               <% similarhostels.forEach(function(similarhostels){ %>
 
-               <span class="chip"><a href="/hostel/<%=similarhostels.hostel_id%>"><%= similarhostels.hostel_name %></a></span>
+                <div class="card">
+
+                  <span class="chip"><a href="/hostel/<%=similarhostels.hostel_id%>"><%= similarhostels.hostel_name %></a></span>
                 
+               
+                  <% if(similarhostels.price_veg < hosteldata.price_veg) { %>
+                     <span class="chip">  Cheaper Veg Mess <i class="bi bi-arrow-down-circle-fill"></i></span>
+
+                   <% } %> 
+                   <% if(similarhostels.price_non_veg < hosteldata.price_non_veg) { %>
+                      <span class="chip"> Cheaper Non Veg Mess <i class="bi bi-arrow-down-circle-fill"></i> </span>
+
+                   <% } %> 
+                   <% if(similarhostels.price_special < hosteldata.price_special) { %>
+                      <span class="chip">  Cheaper Special Mess <i class="bi bi-arrow-down-circle-fill"></i> </span>
+
+                   <% } %> 
+
+
+                   <% if(similarhostels.price_special_nri < hosteldata.price_special_nri) { %>
+                      <span class="chip">  Cheaper Special Mess (For NRI Students) <i class="bi bi-arrow-down-circle-fill"></i> </span>
+
+                   <% } %> 
+                
+
+                </div>
+               
+
               <% }); %>
           <% } else { %>
             <p class="muted">No Similar Hostels available!</p>
