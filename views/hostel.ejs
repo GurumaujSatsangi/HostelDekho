@@ -7,51 +7,12 @@
     <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <title>Hostel Dekho</title>
+    <title><%=hosteldata.hostel_name %> | Hostel Dekho</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
-    <style>
-      /* Accordion styles for floor plans */
-      .accordion-item { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-      .accordion-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; cursor:pointer; background: rgba(255,255,255,0.01); }
-      .accordion-header:focus { outline: 2px solid rgba(34,197,94,0.12); }
-      .accordion-header .card-title { margin:0; font-weight:600; }
-      .accordion-chev { transition: transform .2s ease; color: var(--text-dim); }
-      .accordion-item.open .accordion-chev { transform: rotate(90deg); color: var(--accent); }
-      .accordion-panel { display:none; padding:16px; background: linear-gradient(145deg, #0f121a, #0f1318); }
-      .accordion-panel.open { display:block; }
-      .accordion-panel img { width:100%; border-radius:10px; border:1px solid rgba(255,255,255,0.02); }
-      .accordion-actions { margin-top:12px; display:flex; gap:12px; }
-      
-      /* Trending banner styles */
-      .trending-banner {
-        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-        color: white;
-        padding: 16px 24px;
-        border-radius: 12px;
-        margin: 20px 0;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-        animation: pulse 2s ease-in-out infinite;
-      }
-      .trending-icon {
-        font-size: 24px;
-        animation: bounce 1s ease-in-out infinite;
-      }
-      @keyframes pulse {
-        0%, 100% { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
-        50% { box-shadow: 0 4px 20px rgba(34, 197, 94, 0.5); }
-      }
-      @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-      }
-    </style>
+   
   </head>
   <body>
     <%- include('partials/navbar') %>
@@ -103,7 +64,7 @@
       <div class="card">
           <div class="card-header">
             <p class="card-title" style="margin:0;">Floor Plans</p>
-            <p class="muted">(Click on a specific floor to view floor plan)</p>
+            <p class="muted">(Click to View Rooms)</p>
           </div>
           <% if(floorplan && floorplan.length > 0){ %>
               <% floorplan.forEach(function(floor){ %>
@@ -118,7 +79,7 @@
 
       <div class="card">
           <div class="card-header">
-            <p class="card-title" style="margin:0;">Room Details</p>
+            <p class="card-title" style="margin:0;">Pricing</p>
           </div>
           <% if(roomdetails && roomdetails.length > 0){ %>
               <% roomdetails.forEach(function(roomdetails){ %>
