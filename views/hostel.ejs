@@ -124,31 +124,33 @@
               <% roomdetails.forEach(function(roomdetails){ %>
 <table  class="subtle">
   <tr>
-    <td colspan="2">
+    <td colspan="3">
 <center><b><%=roomdetails.room_type %></b></center>
     </td>
     <td>
       <span class="chip" onclick="showRoomImage('<%=roomdetails.image %>')">VIEW ROOM <i class="bi bi-box-arrow-up-right"></i></span>
     </td>
   </tr>
-  <tr>
-    <td colspan="3">
-      <center>Price with : </center>
-    </td>
 
-  </tr>
   <tr>
+    <td>
+
+    </td>
+   
   <td>
-    Veg Mess
+    <b>Veg Mess</b>
   </td>
   <td>
-    Non Veg Mess
+     <b>Non Veg Mess</b>
   </td>
   <td>
-    Special Mess
+     <b>Special Mess</b>
   </td>
 </tr>
 <tr>
+   <td>
+      <b>Price in Rupees (Hostel & Mess - <u>For Indian Students</u>)</b>
+    </td>
   <td>
     <%=roomdetails.price_veg %>
   </td>
@@ -159,12 +161,47 @@
     <%=roomdetails.price_special %>
   </td>
 </tr>
+
+<tr>
+   <td>
+      <b>Price in Dollars (Hostel & Mess - <u>For NRI Students</u>)</b>
+    </td>
+  <td>
+    <%=roomdetails.price_veg_nri %>
+  </td>
+    <td>
+    <%=roomdetails.price_non_veg_nri %>
+  </td>
+    <td>
+    <%=roomdetails.price_special_nri %>
+  </td>
+</tr>
+
+
 </table>
               <% }); %>
           <% } else { %>
             <p class="muted">No Room Details available!</p>
           <% } %>
       </div>
+
+
+
+      <div class="card">
+          <div class="card-header">
+            <p class="card-title" style="margin:0;">Similar Hostels</p>
+          </div>
+          <% if(similarhostels && similarhostels.length > 0){ %>
+              <% similarhostels.forEach(function(similarhostels){ %>
+
+               <span class="chip"><a href="/hostel/<%=similarhostels.hostel_id%>"><%= similarhostels.hostel_name %></a></span>
+                
+              <% }); %>
+          <% } else { %>
+            <p class="muted">No Similar Hostels available!</p>
+          <% } %>
+      </div>
+
 
 
       

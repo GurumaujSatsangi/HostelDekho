@@ -269,11 +269,26 @@ app.get("/", async (req, res) => {
   res.render("home.ejs", { hosteldata: data, isTrending });
 });
 
+async function similarHostels(bed_type,hostel_type,chota_dhobi_facility){
+
+  const {data,error}=await supabase.from("hostels").select("*").match({
+    "hostel_type":hostel_type,
+    "bed_type":bed_type,
+    "chota_dhobi_facility":chota_dhobi_facility,
+  
+  
+  });
+
+  return data;
+}
+
 app.get("/hostel/:id", async (req, res) => {
   const hosteldata = await getHostel(req.params.id);
   const floorplan = await getFloor(req.params.id);
   const reviews = await getRoom(req.params.id);
   const roomdetails = await getRoomDetails(req.params.id);
+  const similarhostels = await similarHostels(hosteldata.bed_type,hosteldata.hostel_type,hosteldata.chota_dhobi_facility);
+
   
   // Track this specific hostel view in Redis with individual key per hostel
   try {
@@ -301,6 +316,7 @@ app.get("/hostel/:id", async (req, res) => {
     reviews, 
     roomdetails, 
     isTrending: isHostelTrending,
+    similarhostels,
     trendingViews: mostViewedHostel ? mostViewedHostel.views : 0
   });
 });
@@ -524,7 +540,7 @@ async function runSpeedTest() {
     console.log('\n--- Test Complete ---');
 }
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 
 
