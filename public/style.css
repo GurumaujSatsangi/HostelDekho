@@ -367,6 +367,32 @@ table tr:last-child td {
   gap: 10px;
 }
 
+.chip-ladies {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(236, 72, 153, 0.08);
+  color: #ec4899;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.chip-blue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(56, 189, 248, 0.08);
+  color: #38bdf8;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 .list-row {
   padding: 12px 14px;
   border: 1px solid var(--border);

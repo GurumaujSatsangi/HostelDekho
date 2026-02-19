@@ -8,52 +8,19 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <title>Floor: <%=floorplan.floor%> | <%=hostel.hostel_name %> | HostelDekho</title>
-    <style>
-      /* Trending banner styles */
-      .trending-banner {
-        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-        color: white;
-        padding: 16px 24px;
-        border-radius: 12px;
-        margin: 20px 0;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-        animation: pulse 2s ease-in-out infinite;
-      }
-      .trending-icon {
-        font-size: 24px;
-        animation: bounce 1s ease-in-out infinite;
-      }
-      @keyframes pulse {
-        0%, 100% { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
-        50% { box-shadow: 0 4px 20px rgba(34, 197, 94, 0.5); }
-      }
-      @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-      }
-    </style>
+  
   </head>
   <body>
     <%- include('partials/navbar') %>
     <main class="page-shell">
-      
-      <% if (typeof isTrending !== 'undefined' && isTrending) { %>
-      <div class="trending-banner">
-        <span class="trending-icon">🔥</span>
-        <span>This Floor is being viewed the most right now!</span>
-      </div>
-      <% } %>
+    
       <div class="card">
         <div class="card-header">
           <p class="card-title" style="margin:0;"><%=hostel.hostel_name %></p>
           <span class="chip">Floor: <%=floorplan.floor%></span>
         </div>
         <div class="card-content" style="align-items:center;">
-          <img src="<%= floorplan.link %>" style="max-width: 420px; width:100%;" class="img-fluid" />
+          <img src="<%= floorplan.link %>" style="max-width: 800px; width:100%;" class="img-fluid" />
         </div>
       </div>
 
@@ -71,7 +38,7 @@
                 <div class=card-title><%= room.room_number %></div>
 </div>
                  <% if(room.jio_speed === 'Poor' || room.jio_speed==='Very Poor') { %>
-                      <span class="chip-no"><img src="Jio Connection : <%=room.jio_speed %></span>
+                      <span class="chip-no">Jio Connection : <%=room.jio_speed %></span>
 
                         <% } else if(room.jio_speed === 'Good') { %>
                       <span class="chip-mid">Jio Connection : <%=room.jio_speed %></span>
