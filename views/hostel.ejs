@@ -28,36 +28,40 @@
 
       <% } %>
       <div class="card">
-        <div class="card-header">
+        <div class="card-header" style="margin-bottom: 16px;">
           <div>
-            <p class="card-description"><a href="/">Home</a> / <%= hosteldata.hostel_name %></p>
+            <p class="card-description" style="margin: 0;"><a href="/">Home</a> / <%= hosteldata.hostel_name %></p>
           </div>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
           <span class="chip"><%= hosteldata.hostel_type %></span>
           <span class="chip"><%= hosteldata.bed_availability %></span>
           <span class="chip"><%= hosteldata.bed_type %></span>
-
         </div>
-        <hr>
-      <table class="table-subtle">
+        
+      <table class="table-subtle" style="margin-top: 8px;">
+  <thead>
   <tr>
-    <td><b>Mess Caterer</b></td>
-    <td colspan="3"><b>Mess Floors</b></td>
-    <td><b>Badminton Court</b></td>
-    <td><b>Chota Dhobi Facility</b></td>
-
+    <th style="padding: 14px;"><b>Mess Caterer</b></th>
+    <th style="padding: 14px;"><b>Mess Floors</b></th>
+    <th style="padding: 14px;"><b>Badminton Court</b></th>
+    <th style="padding: 14px;"><b>Chota Dhobi Facility</b></th>
   </tr>
+  </thead>
+  <tbody>
   <tr>
-<td><%= hosteldata.mess_caterer %></td>
-<td>VEG MESS:<br><%= hosteldata.veg_mess_floor %></td>
-
-<td>NON VEG MESS:<br><%= hosteldata.non_veg_mess_floor %></td>
-
-<td>SPECIAL MESS:<br><%= hosteldata.special_mess_floor %></td>
-<td><%= hosteldata.badminton_court %></td>
-<td><%= hosteldata.chota_dhobi_facility %></td>
-
-
+    <td style="padding: 14px;"><%= hosteldata.mess_caterer %></td>
+    <td style="padding: 14px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div><strong>VEG MESS:</strong> <%= hosteldata.veg_mess_floor %></div>
+        <div><strong>NON VEG MESS:</strong> <%= hosteldata.non_veg_mess_floor %></div>
+        <div><strong>SPECIAL MESS:</strong> <%= hosteldata.special_mess_floor %></div>
+      </div>
+    </td>
+    <td style="padding: 14px;"><%= hosteldata.badminton_court %></td>
+    <td style="padding: 14px;"><%= hosteldata.chota_dhobi_facility %></td>
   </tr>
+  </tbody>
 </table>
       </div>
 
@@ -66,19 +70,20 @@
             <p class="card-title" style="margin:0;">Floor Plans</p>
             <p class="muted">(Click to View Rooms)</p>
           </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;">
           <% if(floorplan && floorplan.length > 0){ %>
               <% floorplan.forEach(function(floor){ %>
-              <span class="chip"><a href="/floor/<%=floor.id%>">Floor: <%=floor.floor %></a></span>
-
+              <span class="chip"><a href="/floor/<%=floor.id%>"><%=floor.floor %></a></span>
               <% }); %>
           <% } else { %>
             <p class="muted">No Floor Plans available!</p>
           <% } %>
+          </div>
       </div>
 
 
       <div class="card">
-          <div class="card-header">
+          <div class="card-header" style="margin-bottom: 16px;">
             <p class="card-title" style="margin:0;">Pricing</p>
           </div>
           <% if(roomdetails && roomdetails.length > 0){ %>

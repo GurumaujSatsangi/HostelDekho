@@ -85,12 +85,25 @@
     // Check for success message in URL
     const urlParams = new URLSearchParams(window.location.search);
     const message = urlParams.get('message');
+    const error = urlParams.get('error');
+    
     if (message) {
       Swal.fire({
         icon: 'success',
         title: 'Success!',
         text: decodeURIComponent(message),
         confirmButtonColor: '#22c55e'
+      });
+      // Clean up URL by removing the query parameter
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    if (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: decodeURIComponent(error),
+        confirmButtonColor: '#ef4444'
       });
       // Clean up URL by removing the query parameter
       window.history.replaceState({}, document.title, window.location.pathname);

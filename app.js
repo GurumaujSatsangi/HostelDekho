@@ -366,6 +366,27 @@ app.post("/submit-room-details", async (req, res) => {
   const { hostelid, floorid, remarks, roomnumber,jio,airtel,vit,cleanliness } = req.body;
 
   try {
+    // Check if a review already exists for this hostel + room number combination
+    const { data: existingReview, error: checkError } = await supabase
+      .from("reviews")
+      .select("*")
+      .eq("hostel_id", hostelid)
+      .eq("room_number", roomnumber)
+      .single();
+
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 means no rows found
+      console.error("Check error:", checkError);
+      return res
+        .status(500)
+        .json({ error: "Database check failed", details: checkError.message });
+    }
+
+    // If a review already exists for this room in this hostel
+    if (existingReview) {
+      return res.redirect("/floor/" + floorid + "?error=A review already exists for room " + roomnumber + " in this hostel. Only one review per room is allowed.");
+    }
+
+    // Proceed with insert if no existing review
     const { data, error } = await supabase.from("reviews").insert({
       hostel_id: hostelid,
       floor_id: floorid,
