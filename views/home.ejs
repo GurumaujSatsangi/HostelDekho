@@ -16,87 +16,89 @@
     <%- include('partials/navbar') %>
     <main class="page-shell">
       
-      <!-- Search and Filter Section -->
-      <div class="card">
-        <div class="card-header">
-        </div>
-        <div class="card-content">
-          <!-- Search Bar -->
-          <div style="margin-bottom: 16px;">
-            <label for="searchInput" class="form-label">
-              <i class="bi bi-search"></i> Search by Hostel Name
-            </label>
-            <input 
-              type="text" 
-              id="searchInput" 
-              class="form-control" 
-              placeholder="Type hostel name..."
-            />
-          </div>
-
-          <!-- Filters -->
-          <div class="grid-responsive">
-            <div>
-              <label for="filterGender" class="form-label">Gender</label>
-              <select id="filterGender" class="form-select">
-                <option value="">All</option>
-                <option value="MENS">Mens</option>
-                <option value="LADIES">Ladies</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="filterHostelType" class="form-label">Hostel Type</label>
-              <select id="filterHostelType" class="form-select">
-                <option value="">All</option>
-                <option value="AC">AC</option>
-                <option value="NON AC">Non-AC</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="filterBedType" class="form-label">Bed Type</label>
-              <select id="filterBedType" class="form-select">
-                <option value="">All</option>
-                <option value="BUNKER">Bunker</option>
-                <option value="NON BUNKER">Non-Bunker</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="filterDhobi" class="form-label">Chota Dhobi</label>
-              <select id="filterDhobi" class="form-select">
-                <option value="">All</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="filterBedAvailability" class="form-label">Beds Available</label>
-              <select id="filterBedAvailability" class="form-select">
-                <option value="">All</option>
-                <option value="1">1 Bed</option>
-                <option value="2">2 Beds</option>
-                <option value="3">3 Beds</option>
-                <option value="4">4 Beds</option>
-                <option value="6">6 Beds</option>
-                <option value="8">8 Beds</option>
-              </select>
-            </div>
-
-            <div style="display: flex; align-items: flex-end;">
-              <button id="clearFilters" class="btn btn-outline" style="width: 100%;">
-                <i class="bi bi-x-circle"></i> Clear Filters
-              </button>
-            </div>
-          </div>
+      <!-- Search Bar at Top -->
+      <div class="search-bar-container">
+        <div class="search-bar-wrapper">
+          <i class="bi bi-search search-icon"></i>
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Search by Hostel Name..."
+          />
         </div>
       </div>
 
-      <div id="resultsCount" style="color: var(--text-dim); margin-bottom: 12px;"></div>
-      
-      <div id="hostelList">
+      <!-- Layout Container with Sidebar and Content -->
+      <div class="layout-with-sidebar">
+        
+        <!-- Left Sidebar with Filters -->
+        <aside class="filter-sidebar">
+          <div class="sidebar-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="bi bi-funnel" style="color: var(--text);"></i>
+              <h3 class="sidebar-title">Filters</h3>
+            </div>
+            <button id="clearFilters" class="btn-reset">
+              Reset Filters
+            </button>
+          </div>
+
+          <!-- Gender Filter -->
+          <div class="filter-group">
+            <h4 class="filter-label">Gender</h4>
+            <div class="chip-group">
+              <button class="filter-chip" data-filter="gender" data-value="MENS">Mens</button>
+              <button class="filter-chip" data-filter="gender" data-value="LADIES">Ladies</button>
+            </div>
+          </div>
+
+          <!-- Hostel Type Filter -->
+          <div class="filter-group">
+            <h4 class="filter-label">Hostel Type</h4>
+            <div class="chip-group">
+              <button class="filter-chip" data-filter="hostelType" data-value="AC">AC</button>
+              <button class="filter-chip" data-filter="hostelType" data-value="NON AC">Non-AC</button>
+            </div>
+          </div>
+
+          <!-- Bed Type Filter -->
+          <div class="filter-group">
+            <h4 class="filter-label">Bed Type</h4>
+            <div class="chip-group">
+              <button class="filter-chip" data-filter="bedType" data-value="BUNKER">Bunker</button>
+              <button class="filter-chip" data-filter="bedType" data-value="NON BUNKER">Non-Bunker</button>
+            </div>
+          </div>
+
+          <!-- Chota Dhobi Filter -->
+          <div class="filter-group">
+            <h4 class="filter-label">Chota Dhobi</h4>
+            <div class="chip-group">
+              <button class="filter-chip" data-filter="dhobi" data-value="Yes">Available</button>
+              <button class="filter-chip" data-filter="dhobi" data-value="No">Not Available</button>
+            </div>
+          </div>
+
+          <!-- Beds Available Filter -->
+          <div class="filter-group">
+            <h4 class="filter-label">Beds Available</h4>
+            <div class="chip-group">
+              <button class="filter-chip" data-filter="bedAvailability" data-value="1">1</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="2">2</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="3">3</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="4">4</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="6">6</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="8">8</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+          <div id="resultsCount" style="color: var(--text-dim); margin-bottom: 12px; font-weight: 500;"></div>
+          
+          <div id="hostelList">
       <% if(hosteldata && hosteldata.length>0){ %>
         <% hosteldata.forEach(function(hostel) { %>
         <div class="card">
@@ -139,30 +141,58 @@
       <% } else {  %>
 <h1>Coming Soon! <i class="bi bi-emoji-heart-eyes-fill"></i></h1>
         <% } %>
+          </div>
+        </div>
       </div>
     </main>
 
     <%- include('partials/footer') %>
 
     <script>
-      // Search and Filter functionality
+      // Search and Filter functionality with chips
       const searchInput = document.getElementById('searchInput');
-      const filterGender = document.getElementById('filterGender');
-      const filterHostelType = document.getElementById('filterHostelType');
-      const filterBedType = document.getElementById('filterBedType');
-      const filterDhobi = document.getElementById('filterDhobi');
-      const filterBedAvailability = document.getElementById('filterBedAvailability');
       const clearFiltersBtn = document.getElementById('clearFilters');
       const hostelList = document.getElementById('hostelList');
       const resultsCount = document.getElementById('resultsCount');
 
+      // Get all filter chips
+      const filterChips = document.querySelectorAll('.filter-chip');
+      
+      // Active filters storage
+      const activeFilters = {
+        gender: [],
+        hostelType: [],
+        bedType: [],
+        dhobi: [],
+        bedAvailability: []
+      };
+
+      // Toggle chip selection
+      filterChips.forEach(chip => {
+        chip.addEventListener('click', function() {
+          this.classList.toggle('active');
+          const filterType = this.dataset.filter;
+          const value = this.dataset.value;
+          
+          if (this.classList.contains('active')) {
+            if (!activeFilters[filterType].includes(value)) {
+              activeFilters[filterType].push(value);
+            }
+          } else {
+            activeFilters[filterType] = activeFilters[filterType].filter(v => v !== value);
+          }
+          
+          filterHostels();
+        });
+      });
+
       function filterHostels() {
         const searchTerm = searchInput.value.toLowerCase().trim();
-        const gender = filterGender.value;
-        const hostelType = filterHostelType.value;
-        const bedType = filterBedType.value;
-        const dhobi = filterDhobi.value;
-        const bedAvailability = filterBedAvailability.value;
+        const selectedGenders = activeFilters.gender;
+        const selectedHostelTypes = activeFilters.hostelType;
+        const selectedBedTypes = activeFilters.bedType;
+        const selectedDhobi = activeFilters.dhobi;
+        const selectedBedAvailability = activeFilters.bedAvailability;
 
         const cards = hostelList.querySelectorAll('.card');
         let visibleCount = 0;
@@ -190,13 +220,13 @@
             }
           });
 
-          // Apply filters
+          // Apply filters (if nothing is selected, show all)
           const matchesSearch = hostelName.includes(searchTerm);
-          const matchesGender = !gender || genderChip === gender;
-          const matchesHostelType = !hostelType || hostelTypeText === hostelType;
-          const matchesBedType = !bedType || bedTypeText === bedType;
-          const matchesDhobi = !dhobi || dhobiText === dhobi;
-          const matchesBedAvailability = !bedAvailability || bedAvailabilityText === bedAvailability;
+          const matchesGender = selectedGenders.length === 0 || selectedGenders.includes(genderChip);
+          const matchesHostelType = selectedHostelTypes.length === 0 || selectedHostelTypes.includes(hostelTypeText);
+          const matchesBedType = selectedBedTypes.length === 0 || selectedBedTypes.includes(bedTypeText);
+          const matchesDhobi = selectedDhobi.length === 0 || selectedDhobi.includes(dhobiText);
+          const matchesBedAvailability = selectedBedAvailability.length === 0 || selectedBedAvailability.includes(bedAvailabilityText);
 
           const isVisible = matchesSearch && matchesGender && matchesHostelType && 
                            matchesBedType && matchesDhobi && matchesBedAvailability;
@@ -212,19 +242,12 @@
 
       // Event listeners
       searchInput.addEventListener('input', filterHostels);
-      filterGender.addEventListener('change', filterHostels);
-      filterHostelType.addEventListener('change', filterHostels);
-      filterBedType.addEventListener('change', filterHostels);
-      filterDhobi.addEventListener('change', filterHostels);
-      filterBedAvailability.addEventListener('change', filterHostels);
 
       clearFiltersBtn.addEventListener('click', () => {
         searchInput.value = '';
-        filterGender.value = '';
-        filterHostelType.value = '';
-        filterBedType.value = '';
-        filterDhobi.value = '';
-        filterBedAvailability.value = '';
+        filterChips.forEach(chip => chip.classList.remove('active'));
+        // Reset active filters
+        Object.keys(activeFilters).forEach(key => activeFilters[key] = []);
         filterHostels();
       });
 
