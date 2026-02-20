@@ -561,11 +561,8 @@ async function runSpeedTest() {
     console.log('\n--- Test Complete ---');
 }
 
-const PORT = process.env.PORT || 3001;
 
 
 
-app.listen(PORT, () => {
-  console.log("Running on Port 3000!");
-});
+app.listen(3000);
 
