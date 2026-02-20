@@ -59,6 +59,7 @@
 
       <div class="card">
         <form action="/submit-room-details" method="POST">
+          <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
           <table class="table-subtle">
               
             <input type="hidden" name="hostelid" value="<%=hostel.hostel_id%>">
@@ -123,6 +124,7 @@
               <td colspan="2"><input type="submit" class="chip" value="Submit" /></td>
             </tr>
           </table>
+          </div>
         </form>
       </div>
     </main>

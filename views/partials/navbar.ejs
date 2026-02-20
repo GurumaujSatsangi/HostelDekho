@@ -1,52 +1,137 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<style>
+  /* Mobile Menu Toggle */
+  .mobile-menu-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .mobile-menu-toggle {
+      display: block;
+    }
+    
+    .nav-shell {
+      position: relative;
+    }
+    
+    .nav-actions-wrapper {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 25, 0.98);
+      border: 1px solid var(--border);
+      border-top: none;
+      padding: 12px;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    
+    .nav-actions-wrapper.show {
+      display: block;
+    }
+    
+    .nav-actions-wrapper .nav-actions {
+      margin-bottom: 8px;
+    }
+    
+    .nav-actions-wrapper .nav-actions:last-child {
+      margin-bottom: 0;
+    }
+  }
+</style>
+
 <nav class="app-navbar">
   <div class="nav-shell">
-    <a href="/" class="brand">
-      <span class="brand-icon"><i class="bi bi-house-heart-fill"></i></span>
-      <span>Hostel Dekho</span>
-    </a>
-    <div class="nav-actions">
-      <a type="button" onclick="mhlayout()" class="btn btn-primary">Mens Hostel Layout</a>
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <a href="/" class="brand">
+        <span class="brand-icon"><i class="bi bi-house-heart-fill"></i></span>
+        <span>Hostel Dekho</span>
+      </a>
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+        <i class="bi bi-list"></i>
+      </button>
     </div>
-     <div class="nav-actions">
-      <a type="button" disabled class="btn btn-primary">Mens Hostel Counselling is on March 6 (NRI) & on March 7/8 (Indian)</a>
-    </div>
-
-
     
+    <div class="nav-actions-wrapper" id="navActionsWrapper">
+      <div class="nav-actions">
+        <a type="button" onclick="mhlayout()" class="btn btn-primary">Mens Hostel Layout</a>
+      </div>
+      <div class="nav-actions">
+        <a type="button" disabled class="btn btn-primary">Mens Hostel Counselling is on March 6 (NRI) & on March 7/8 (Indian)</a>
+      </div>
+    </div>
   </div>
 </nav>
 
 <script>
+  // Mobile menu toggle
+  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  const navActionsWrapper = document.getElementById('navActionsWrapper');
+  
+  if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener('click', function() {
+      navActionsWrapper.classList.toggle('show');
+      const icon = this.querySelector('i');
+      if (navActionsWrapper.classList.contains('show')) {
+        icon.classList.remove('bi-list');
+        icon.classList.add('bi-x');
+      } else {
+        icon.classList.remove('bi-x');
+        icon.classList.add('bi-list');
+      }
+    });
+  }
+  
+  // Close menu when clicking outside
+  document.addEventListener('click', function(event) {
+    if (navActionsWrapper && mobileMenuToggle) {
+      if (!event.target.closest('.nav-shell')) {
+        navActionsWrapper.classList.remove('show');
+        const icon = mobileMenuToggle.querySelector('i');
+        icon.classList.remove('bi-x');
+        icon.classList.add('bi-list');
+      }
+    }
+  });
+  
   function mhlayout(){
-
-Swal.fire({
-    title: "Mens Hostel Layout",
-
-  imageUrl: "/mhlayout.png",
-  imageWidth: 800,
-  imageHeight: 500,
-  imageAlt: "MH Layout",
-  confirmButtonColor: '#22c55e'
-
-});
-
+    Swal.fire({
+      title: "Mens Hostel Layout",
+      imageUrl: "/mhlayout.png",
+      imageWidth: 800,
+      imageHeight: 500,
+      imageAlt: "MH Layout",
+      confirmButtonColor: '#22c55e',
+      width: 'auto',
+      customClass: {
+        popup: 'responsive-swal'
+      }
+    });
   }
 
-
   function lhlayout(){
-
-Swal.fire({
-  title: "Ladies Hostel Layout",
-  imageUrl: "/mhlayout.png",
-  imageWidth: 800,
-  imageHeight: 500,
-  imageAlt: "LH Layout",
-  confirmButtonColor: '#22c55e'
-
-});
-
+    Swal.fire({
+      title: "Ladies Hostel Layout",
+      imageUrl: "/mhlayout.png",
+      imageWidth: 800,
+      imageHeight: 500,
+      imageAlt: "LH Layout",
+      confirmButtonColor: '#22c55e',
+      width: 'auto',
+      customClass: {
+        popup: 'responsive-swal'
+      }
+    });
   }
 </script>

@@ -59,10 +59,25 @@ a:hover {
   gap: 24px;
 }
 
+@media (max-width: 768px) {
+  .page-shell {
+    width: calc(100% - 24px);
+    margin: 16px auto 24px;
+    gap: 16px;
+  }
+}
+
 .layout-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 .layout-3col {
@@ -86,10 +101,25 @@ a:hover {
   color: var(--text);
 }
 
+@media (max-width: 768px) {
+  .card {
+    padding: 16px;
+    border-radius: var(--radius-md);
+  }
+}
+
 .card + .card {
   margin-top: var(--spacing-md);
 }
 
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
 .card-header {
   display: flex;
   align-items: baseline;
@@ -304,6 +334,18 @@ table tr:last-child td {
   align-items: center;
   justify-content: space-between;
   padding: 14px 0;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .navbar .container,
+  .app-navbar .container,
+  .nav-shell {
+    width: calc(100% - 24px);
+    padding: 10px 0;
+    flex-wrap: wrap;
+  }
 }
 
 .brand {
@@ -331,6 +373,31 @@ table tr:last-child td {
   gap: 10px;
 }
 
+@media (max-width: 768px) {
+  .nav-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .nav-actions .btn {
+    width: 100%;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .footer-inner {
+    width: calc(100% - 24px);
+    flex-direction: column;
+    text-align: center;
+    padding: 16px 0;
+  }
+}
 .footer {
   margin-top: auto;
   background: rgba(10, 14, 22, 0.9);
@@ -524,6 +591,12 @@ img {
   margin-bottom: 24px;
 }
 
+@media (max-width: 768px) {
+  .search-bar-container {
+    margin-bottom: 16px;
+  }
+}
+
 .search-bar-wrapper {
   position: relative;
   max-width: 100%;
@@ -540,6 +613,13 @@ img {
   z-index: 1;
 }
 
+@media (max-width: 768px) {
+  .search-icon {
+    left: 12px;
+    font-size: 1rem;
+  }
+}
+
 .search-input {
   width: 100%;
   padding: 14px 16px 14px 48px !important;
@@ -550,6 +630,13 @@ img {
   font-size: 1rem;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .search-input {
+    padding: 12px 12px 12px 40px !important;
+    font-size: 0.95rem;
+  }
 }
 
 .search-input:focus {
@@ -577,10 +664,18 @@ img {
   
   .filter-sidebar {
     order: 2;
+    position: static;
+    max-height: none;
   }
   
   .main-content {
     order: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-with-sidebar {
+    gap: 16px;
   }
 }
 
@@ -597,6 +692,18 @@ img {
   box-shadow: var(--shadow);
 }
 
+@media (max-width: 968px) {
+  .filter-sidebar {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-sidebar {
+    border-radius: var(--radius-md);
+  }
+}
+
 .filter-sidebar::-webkit-scrollbar {
   width: 6px;
 }
@@ -610,6 +717,13 @@ img {
   border-radius: 3px;
 }
 
+
+@media (max-width: 768px) {
+  .sidebar-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
 .filter-sidebar::-webkit-scrollbar-thumb:hover {
   background: rgba(34, 197, 94, 0.3);
 }
@@ -716,4 +830,204 @@ img {
   min-width: 0;
 }
 
+/* Responsive Tables */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table-subtle {
+    overflow-x: auto;
+    display: block;
+  }
+  
+  table th,
+  table td {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Mobile Typography */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.95rem;
+  }
+  
+  .card-title {
+    font-size: 1.1rem;
+  }
+  
+  .card-description {
+    font-size: 0.875rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  h4 {
+    font-size: 1.1rem;
+  }
+}
+
+/* Chips Responsive */
+@media (max-width: 768px) {
+  .chip,
+  .chip-no,
+  .chip-mid,
+  .chip-ladies,
+  .chip-blue {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+}
+
+/* Button Responsive */
+@media (max-width: 768px) {
+  .btn,
+  .btn-primary,
+  .btn-outline,
+  .btn-secondary,
+  .btn-dark {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Hero Section Responsive */
+@media (max-width: 768px) {
+  .hero {
+    padding: 20px;
+  }
+}
+
+/* Grid Responsive */
+@media (max-width: 768px) {
+  .grid-responsive {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* SweetAlert Responsive */
+@media (max-width: 768px) {
+  .responsive-swal {
+    width: calc(100% - 32px) !important;
+    max-width: none !important;
+  }
+  
+  .swal2-image {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* Additional Mobile Optimizations */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Make inline actions stack */
+  .inline-actions {
+    flex-direction: column;
+  }
+  
+  .inline-actions .btn {
+    width: 100%;
+  }
+  
+  /* Adjust brand icon */
+  .brand {
+    font-size: 0.95rem;
+  }
+  
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  /* Better touch targets */
+  .filter-chip {
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+  
+  /* Adjust input heights for mobile */
+  input,
+  select,
+  textarea,
+  .form-control,
+  .form-select {
+    min-height: 48px !important;
+  }
+  
+  /* Stack flex containers better */
+  .card-header > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* Landscape phone orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  .filter-sidebar {
+    max-height: none;
+  }
+}
+
+/* Small phones (< 400px) */
+@media (max-width: 400px) {
+  .page-shell {
+    width: calc(100% - 16px);
+  }
+  
+  .card {
+    padding: 12px;
+  }
+  
+  .btn {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+  
+  .chip,
+  .chip-no,
+  .chip-mid,
+  .chip-ladies,
+  .chip-blue {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+}
+
+/* Tablet specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .page-shell {
+    width: calc(100% - 32px);
+  }
+  
+  .layout-with-sidebar {
+    grid-template-columns: 240px 1fr;
+  }
+}
 

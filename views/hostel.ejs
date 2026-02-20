@@ -39,6 +39,7 @@
           <span class="chip"><%= hosteldata.bed_type %></span>
         </div>
         
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
       <table class="table-subtle" style="margin-top: 8px;">
   <thead>
   <tr>
@@ -64,6 +65,7 @@
   </tbody>
 </table>
       </div>
+      </div>
 
       <div class="card">
           <div class="card-header">
@@ -88,6 +90,7 @@
           </div>
           <% if(roomdetails && roomdetails.length > 0){ %>
               <% roomdetails.forEach(function(roomdetails){ %>
+<div style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 16px;">
 <table  class="subtle">
   <tr>
     <td colspan="3">
@@ -145,6 +148,7 @@
 
 
 </table>
+</div>
               <% }); %>
           <% } else { %>
             <p class="muted">No Room Details available!</p>
