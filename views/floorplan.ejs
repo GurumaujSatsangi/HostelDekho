@@ -20,7 +20,17 @@
           <span class="chip">Floor: <%=floorplan.floor%></span>
         </div>
         <div class="card-content" style="align-items:center;">
-          <img src="<%= floorplan.link %>" style="max-width: 800px; width:100%;" class="img-fluid" />
+          <% if(floorplan.link && floorplan.link.length>0) { %>
+          
+                    <img src="<%= floorplan.link %>" style="max-width: 500px; width:100%;" class="img-fluid" />
+
+          <% } else { %>
+
+            <h4>Coming Soon!</h4>
+
+            <% } %>
+
+
         </div>
       </div>
 
@@ -70,6 +80,13 @@
                       <span class="chip">VIT Wifi Connection : <%=room.vit_wifi_speed %></span>
 
                           <% } %>
+<% if(room.remarks && room.remarks.length>0) { %>
+
+  <span class="chip-blue">Remarks : <%=room.remarks %></span>
+
+
+<% } %>
+
 </div>
 
             <% }); %>
