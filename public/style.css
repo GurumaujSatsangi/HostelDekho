@@ -99,6 +99,9 @@ a:hover {
   padding: var(--card-padding);
   box-shadow: var(--shadow);
   color: var(--text);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 @media (max-width: 768px) {
@@ -107,11 +110,6 @@ a:hover {
     border-radius: var(--radius-md);
   }
 }
-
-.card + .card {
-  margin-top: var(--spacing-md);
-}
-
 
 @media (max-width: 768px) {
   .card-header {
@@ -122,10 +120,11 @@ a:hover {
 }
 .card-header {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .card-title {
@@ -828,6 +827,28 @@ img {
 /* Main Content Area */
 .main-content {
   min-width: 0;
+}
+
+/* Hostel List Grid */
+#hostelList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  #hostelList {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  #hostelList {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 /* Responsive Tables */
