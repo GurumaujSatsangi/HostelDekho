@@ -260,13 +260,22 @@ async function getFloor(id) {
 }
 
 app.get("/", async (req, res) => {
-  const data = await getAllHostel();
-  
-  // Check if this is the most viewed page
-  const mostViewed = await getMostViewedPage();
-  const isTrending = mostViewed && mostViewed.path === req.path;
-  
-  res.render("home.ejs", { hosteldata: data, isTrending });
+  try {
+    const data = await getAllHostel();
+    if (!data) {
+      console.error("Error: Failed to fetch hostels");
+      return res.status(404).render("error.ejs", { message: "Hostels not found" });
+    }
+    
+    // Check if this is the most viewed page
+    const mostViewed = await getMostViewedPage();
+    const isTrending = mostViewed && mostViewed.path === req.path;
+    
+    res.render("home.ejs", { hosteldata: data, isTrending });
+  } catch (err) {
+    console.error("Error rendering home page:", err);
+    return res.status(500).render("error.ejs", { message: "Internal Server Error: Unable to load hostels" });
+  }
 });
 
 async function similarHostels(bed_type,hostel_type,chota_dhobi_facility){
@@ -283,73 +292,102 @@ async function similarHostels(bed_type,hostel_type,chota_dhobi_facility){
 }
 
 app.get("/hostel/:id", async (req, res) => {
-  const hosteldata = await getHostel(req.params.id);
-  const floorplan = await getFloor(req.params.id);
-  const reviews = await getRoom(req.params.id);
-  const roomdetails = await getRoomDetails(req.params.id);
-  const similarhostels = await similarHostels(hosteldata.bed_type,hosteldata.hostel_type,hosteldata.chota_dhobi_facility);
-
-  
-  // Track this specific hostel view in Redis with individual key per hostel
   try {
-    if (redisClient && redisClient.isReady) {
-      const hostelKey = `hostel:${req.params.id}`;
-      await redisClient.incr(hostelKey);
-      const currentViews = await redisClient.get(hostelKey);
-      console.log(`✅ Cached hostel view for hostel ID: ${req.params.id}, Total views: ${currentViews}`);
+    const hosteldata = await getHostel(req.params.id);
+    if (!hosteldata) {
+      console.error("Error: Hostel not found for ID:", req.params.id);
+      return res.status(404).render("error.ejs", { message: "Hostel not found" });
     }
+
+    const floorplan = await getFloor(req.params.id);
+    const reviews = await getRoom(req.params.id);
+    const roomdetails = await getRoomDetails(req.params.id);
+    const similarhostels = await similarHostels(hosteldata.bed_type, hosteldata.hostel_type, hosteldata.chota_dhobi_facility);
+
+    // Track this specific hostel view in Redis with individual key per hostel
+    try {
+      if (redisClient && redisClient.isReady) {
+        const hostelKey = `hostel:${req.params.id}`;
+        await redisClient.incr(hostelKey);
+        const currentViews = await redisClient.get(hostelKey);
+        console.log(`✅ Cached hostel view for hostel ID: ${req.params.id}, Total views: ${currentViews}`);
+      }
+    } catch (err) {
+      console.error('Error caching hostel view:', err.message);
+    }
+
+    // Check if this is the most viewed hostel
+    const mostViewedHostel = await getMostViewedHostel();
+    const isHostelTrending = mostViewedHostel && mostViewedHostel.hostelId === req.params.id;
+
+    if (isHostelTrending) {
+      console.log(`🔥 Hostel ${req.params.id} is trending with ${mostViewedHostel.views} views!`);
+    }
+
+    return res.render("hostel.ejs", {
+      hosteldata,
+      floorplan,
+      reviews,
+      roomdetails,
+      isTrending: isHostelTrending,
+      similarhostels,
+      trendingViews: mostViewedHostel ? mostViewedHostel.views : 0
+    });
   } catch (err) {
-    console.error('Error caching hostel view:', err.message);
+    console.error("Error rendering hostel page:", err);
+    return res.status(500).render("error.ejs", { message: "Internal Server Error: Unable to load hostel details" });
   }
-  
-  // Check if this is the most viewed hostel
-  const mostViewedHostel = await getMostViewedHostel();
-  const isHostelTrending = mostViewedHostel && mostViewedHostel.hostelId === req.params.id;
-  
-  if (isHostelTrending) {
-    console.log(`🔥 Hostel ${req.params.id} is trending with ${mostViewedHostel.views} views!`);
-  }
-  
-  return res.render("hostel.ejs", { 
-    hosteldata, 
-    floorplan, 
-    reviews, 
-    roomdetails, 
-    isTrending: isHostelTrending,
-    similarhostels,
-    trendingViews: mostViewedHostel ? mostViewedHostel.views : 0
-  });
 });
 
 app.get("/floor/:floorid", async (req, res) => {
-  
-  const roomdata = await getRoom(req.params.floorid);
-  const floorplan = await getFloorPlan(req.params.floorid);
-  const hostel = await getHostel(floorplan.hostel_id);
-  
-  // Check if this is the most viewed page
-  const mostViewed = await getMostViewedPage();
-  const isTrending = mostViewed && mostViewed.path === req.path;
-  
-  return res.render("floorplan.ejs", { roomdata, floorplan, hostel, isTrending });
+  try {
+    const floorplan = await getFloorPlan(req.params.floorid);
+    if (!floorplan) {
+      console.error("Error: Floor plan not found for ID:", req.params.floorid);
+      return res.status(404).render("error.ejs", { message: "Floor plan not found" });
+    }
+
+    const roomdata = await getRoom(req.params.floorid);
+    const hostel = await getHostel(floorplan.hostel_id);
+    if (!hostel) {
+      console.error("Error: Hostel not found for floor ID:", req.params.floorid);
+      return res.status(404).render("error.ejs", { message: "Associated hostel not found" });
+    }
+
+    // Check if this is the most viewed page
+    const mostViewed = await getMostViewedPage();
+    const isTrending = mostViewed && mostViewed.path === req.path;
+
+    return res.render("floorplan.ejs", { roomdata, floorplan, hostel, isTrending });
+  } catch (err) {
+    console.error("Error rendering floor plan page:", err);
+    return res.status(500).render("error.ejs", { message: "Internal Server Error: Unable to load floor plan" });
+  }
 });
 
 app.get("/review/:floorId", async (req, res) => {
-  const floorplan = await getFloorPlan(req.params.floorId);
-  if (!floorplan) {
-    return res.status(404).send("Floor plan not found");
+  try {
+    const floorplan = await getFloorPlan(req.params.floorId);
+    if (!floorplan) {
+      console.error("Error: Floor plan not found for ID:", req.params.floorId);
+      return res.status(404).render("error.ejs", { message: "Floor plan not found" });
+    }
+
+    const hostel = await getHostel(floorplan.hostel_id);
+    if (!hostel) {
+      console.error("Error: Hostel not found for floor ID:", req.params.floorId);
+      return res.status(404).render("error.ejs", { message: "Associated hostel not found" });
+    }
+
+    // Check if this is the most viewed page
+    const mostViewed = await getMostViewedPage();
+    const isTrending = mostViewed && mostViewed.path === req.path;
+
+    return res.render("review.ejs", { hostel, floorplan, isTrending });
+  } catch (err) {
+    console.error("Error rendering review page:", err);
+    return res.status(500).render("error.ejs", { message: "Internal Server Error: Unable to load review page" });
   }
-
-  const hostel = await getHostel(floorplan.hostel_id);
-  if (!hostel) {
-    return res.status(404).send("Hostel not found");
-  }
-
-  // Check if this is the most viewed page
-  const mostViewed = await getMostViewedPage();
-  const isTrending = mostViewed && mostViewed.path === req.path;
-
-  res.render("review.ejs", { hostel, floorplan, isTrending });
 });
 
 
@@ -363,9 +401,15 @@ app.get("/review/:floorId", async (req, res) => {
 
 
 app.post("/submit-room-details", async (req, res) => {
-  const { hostelid, floorid, remarks, roomnumber,jio,airtel,vit,cleanliness } = req.body;
+  const { hostelid, floorid, remarks, roomnumber, jio, airtel, vit, cleanliness } = req.body;
 
   try {
+    // Validate required fields
+    if (!hostelid || !floorid || !roomnumber) {
+      console.error("Error: Missing required fields - hostelid, floorid, or roomnumber");
+      return res.status(400).render("error.ejs", { message: "Missing required fields" });
+    }
+
     // Check if a review already exists for this hostel + room number combination
     const { data: existingReview, error: checkError } = await supabase
       .from("reviews")
@@ -376,13 +420,12 @@ app.post("/submit-room-details", async (req, res) => {
 
     if (checkError && checkError.code !== 'PGRST116') { // PGRST116 means no rows found
       console.error("Check error:", checkError);
-      return res
-        .status(500)
-        .json({ error: "Database check failed", details: checkError.message });
+      return res.status(500).render("error.ejs", { message: "Database check failed: " + checkError.message });
     }
 
     // If a review already exists for this room in this hostel
     if (existingReview) {
+      console.warn("Warning: Duplicate review attempt for hostel:", hostelid, "room:", roomnumber);
       return res.redirect("/floor/" + floorid + "?error=A review already exists for room " + roomnumber + " in this hostel. Only one review per room is allowed.");
     }
 
@@ -390,26 +433,23 @@ app.post("/submit-room-details", async (req, res) => {
     const { data, error } = await supabase.from("reviews").insert({
       hostel_id: hostelid,
       floor_id: floorid,
-      airtel_speed:airtel,
-      jio_speed:jio,
-      vit_wifi_speed:vit,
-      cleaniless_score:cleanliness,
+      airtel_speed: airtel,
+      jio_speed: jio,
+      vit_wifi_speed: vit,
+      cleaniless_score: cleanliness,
       room_number: roomnumber,
       remarks: remarks,
     });
 
     if (error) {
       console.error("Insert error:", error);
-      return res
-        .status(500)
-        .json({ error: "Database insert failed", details: error.message });
+      return res.status(500).render("error.ejs", { message: "Failed to submit room details: " + error.message });
     }
 
-   res.redirect("/floor/" + floorid + "?message=Room Details have been added successfully!");
-
+    return res.redirect("/floor/" + floorid + "?message=Room Details have been added successfully!");
   } catch (err) {
-    console.error("Unexpected error:", err);
-    res.status(500).json({ error: "Unexpected server error" });
+    console.error("Unexpected error in submit-room-details:", err);
+    return res.status(500).render("error.ejs", { message: "Internal Server Error: Unable to submit room details" });
   }
 });
 
@@ -422,6 +462,13 @@ app.post("/submit-room-details", async (req, res) => {
 app.get("/floors/:hostelId", async (req, res) => {
   try {
     const { hostelId } = req.params;
+    
+    // Validate hostelId
+    if (!hostelId) {
+      console.error("Error: Missing hostelId parameter");
+      return res.status(400).json({ error: "Hostel ID is required" });
+    }
+
     const { data: floors, error } = await supabase
       .from("floor_plans")
       .select("id, floor")
@@ -429,139 +476,25 @@ app.get("/floors/:hostelId", async (req, res) => {
 
     if (error) {
       console.error("Floor fetch error:", error);
-      return res.status(500).json({ error: "Error fetching floors" });
+      return res.status(500).json({ error: "Database error: " + error.message });
+    }
+
+    // If no floors found, return empty array or 404 based on requirements
+    if (!floors || floors.length === 0) {
+      console.warn("Warning: No floors found for hostel ID:", hostelId);
+      return res.json([]);
     }
 
     res.json(floors);
   } catch (err) {
-    console.error("Server error:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Speed test API endpoint
-app.get("/api/speedtest", async (req, res) => {
-  try {
-    console.log("Running speed test via API...");
-    
-    const downloadSpeed = await testDownload(25_000_000); // 25 MB
-    const uploadSpeed = await testUpload(10_000_000); // 10 MB
-    
-    console.log(`Speed test completed - Download: ${downloadSpeed} Mbps, Upload: ${uploadSpeed} Mbps`);
-    
-    res.json({
-      success: true,
-      downloadSpeed: parseFloat(downloadSpeed),
-      uploadSpeed: parseFloat(uploadSpeed),
-      unit: "Mbps"
-    });
-  } catch (error) {
-    console.error("Speed test failed:", error);
-    res.status(500).json({
-      success: false,
-      error: "Speed test failed",
-      downloadSpeed: 0,
-      uploadSpeed: 0
-    });
+    console.error("Server error in /floors/:hostelId:", err);
+    return res.status(500).json({ error: "Internal Server Error: " + err.message });
   }
 });
 
 
-const BASE_URL = 'https://speed.cloudflare.com';
-
-/**
- * Calculates speed in Mbps.
- * @param {number} bytes - The number of bytes transferred.
- * @param {number} seconds - The duration of the transfer in seconds.
- * @returns {string} - The speed formatted to two decimal places.
- */
-function calculateMbps(bytes, seconds) {
-    if (seconds === 0) return '0.00';
-    // Formula: (Bytes / seconds) * 8 = bits per second
-    // Then divide by 1,000,000 for Mbps
-    return ((bytes * 8) / seconds / 1_000_000).toFixed(2);
-}
-
-/**
- * Performs a download test.
- * @param {number} bytesToDownload - The size of the payload to download in bytes.
- * @returns {Promise<string>} - A promise that resolves with the download speed in Mbps.
- */
-async function testDownload(bytesToDownload = 25_000_000) {
-    console.log(`\nTesting download with ${bytesToDownload / 1_000_000} MB...`);
-    const url = `${BASE_URL}/__down?bytes=${bytesToDownload}`;
-
-    const startTime = process.hrtime.bigint();
-
-    try {
-        const response = await axios.get(url, { responseType: 'stream' });
-        const stream = response.data;
-        
-        // Wait for the stream to finish downloading
-        await new Promise((resolve, reject) => {
-            stream.on('end', resolve);
-            stream.on('error', reject);
-            // Consume the stream to ensure data is downloaded
-            stream.pipe(new Stream.Writable({ write(chunk, encoding, callback) { callback(); } }));
-        });
-
-        const endTime = process.hrtime.bigint();
-        const durationInSeconds = Number(endTime - startTime) / 1e9; // Convert nanoseconds to seconds
-
-        console.log(`Download finished in ${durationInSeconds.toFixed(2)} seconds.`);
-        return calculateMbps(bytesToDownload, durationInSeconds);
-
-    } catch (error) {
-        console.error('Download test failed:', error.message);
-        return '0.00';
-    }
-}
-
-/**
- * Performs an upload test.
- * @param {number} bytesToUpload - The size of the payload to upload in bytes.
- * @returns {Promise<string>} - A promise that resolves with the upload speed in Mbps.
- */
-async function testUpload(bytesToUpload = 10_000_000) {
-    console.log(`\nTesting upload with ${bytesToUpload / 1_000_000} MB...`);
-    const url = `${BASE_URL}/__up`;
-    const data = crypto.randomBytes(bytesToUpload); // Generate random data
-
-    const startTime = process.hrtime.bigint();
-
-    try {
-        await axios.post(url, data, {
-            headers: { 'Content-Type': 'application/octet-stream' }
-        });
-
-        const endTime = process.hrtime.bigint();
-        const durationInSeconds = Number(endTime - startTime) / 1e9;
-
-        console.log(`Upload finished in ${durationInSeconds.toFixed(2)} seconds.`);
-        return calculateMbps(bytesToUpload, durationInSeconds);
-
-    } catch (error) {
-        console.error('Upload test failed:', error.message);
-        return '0.00';
-    }
-}
-
-/**
- * Main function to run the speed tests.
- */
-async function runSpeedTest() {
-    console.log('--- Starting Cloudflare Speed Test ---');
-
-    const downloadSpeed = await testDownload(25_000_000); // 25 MB
-    console.log(`➡️  Download Speed: ${downloadSpeed} Mbps`);
-
-    const uploadSpeed = await testUpload(10_000_000); // 10 MB
-    console.log(`⬆️  Upload Speed: ${uploadSpeed} Mbps`);
-    
-    console.log('\n--- Test Complete ---');
-}
-
-
-
+app.use(async(req,res,next)=>{
+return res.status(404).render("error.ejs");
+})
 
 app.listen(3000, "0.0.0.0")
