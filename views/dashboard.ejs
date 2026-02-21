@@ -162,46 +162,6 @@
 
     <%- include('partials/footer') %>
     <script src="/script.js"></script>
-
-    <script>
-        function runSpeedTestAndUpdate() {
-          const downloadDisplay = document.getElementById('download-speed-display');
-          const uploadDisplay = document.getElementById('upload-speed-display');
-          const statusElement = document.getElementById('speed-status');
-          const downloadInput = document.getElementById('download-speed-input');
-          const uploadInput = document.getElementById('upload-speed-input');
-
-          statusElement.textContent = 'Running speed test...';
-          fetch('/api/speedtest')
-              .then(response => {
-                  if (!response.ok) {
-                      throw new Error('Network response was not ok');
-                  }
-                  return response.json();
-              })
-              .then(data => {
-                  downloadDisplay.textContent = `${data.downloadSpeed} Mbps`;
-                  uploadDisplay.textContent = `${data.uploadSpeed} Mbps`;
-                  downloadInput.value = data.downloadSpeed;
-                  uploadInput.value = data.uploadSpeed;
-                  statusElement.textContent = 'Speed test complete.';
-              })
-              .catch(error => {
-                  console.error('Error fetching speed test results:', error);
-                  downloadDisplay.textContent = 'Error';
-                  uploadDisplay.textContent = 'Error';
-                  statusElement.textContent = 'Could not complete speed test.';
-              });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const rerunBtn = document.getElementById('rerun-speed');
-            if (rerunBtn) {
-              rerunBtn.addEventListener('click', runSpeedTestAndUpdate);
-            }
-            runSpeedTestAndUpdate();
-        });
-    </script>
   </body>
 </html>
 

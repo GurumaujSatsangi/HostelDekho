@@ -88,71 +88,7 @@
       <div class="nav-actions">
         <a type="button" onclick="mhlayout()" class="btn btn-primary">Mens Hostel Layout</a>
       </div>
-      <div class="nav-actions">
-        <a type="button" disabled class="btn btn-primary">Mens Hostel Counselling is on March 6 (NRI) & on March 7/8 (Indian)</a>
-      </div>
+    
     </div>
   </div>
 </nav>
-
-<script>
-  // Mobile menu toggle
-  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-  const navActionsWrapper = document.getElementById('navActionsWrapper');
-  
-  if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', function() {
-      navActionsWrapper.classList.toggle('show');
-      const icon = this.querySelector('i');
-      if (navActionsWrapper.classList.contains('show')) {
-        icon.classList.remove('bi-list');
-        icon.classList.add('bi-x');
-      } else {
-        icon.classList.remove('bi-x');
-        icon.classList.add('bi-list');
-      }
-    });
-  }
-  
-  // Close menu when clicking outside
-  document.addEventListener('click', function(event) {
-    if (navActionsWrapper && mobileMenuToggle) {
-      if (!event.target.closest('.nav-shell')) {
-        navActionsWrapper.classList.remove('show');
-        const icon = mobileMenuToggle.querySelector('i');
-        icon.classList.remove('bi-x');
-        icon.classList.add('bi-list');
-      }
-    }
-  });
-  
-  function mhlayout(){
-    Swal.fire({
-      title: "Mens Hostel Layout",
-      imageUrl: "/mhlayout.png",
-      imageWidth: 800,
-      imageHeight: 500,
-      imageAlt: "MH Layout",
-      confirmButtonColor: '#22c55e',
-      width: 'auto',
-      customClass: {
-        popup: 'responsive-swal'
-      }
-    });
-  }
-
-  function lhlayout(){
-    Swal.fire({
-      title: "Ladies Hostel Layout",
-      imageUrl: "/mhlayout.png",
-      imageWidth: 800,
-      imageHeight: 500,
-      imageAlt: "LH Layout",
-      confirmButtonColor: '#22c55e',
-      width: 'auto',
-      customClass: {
-        popup: 'responsive-swal'
-      }
-    });
-  }
-</script>

@@ -45,7 +45,13 @@
         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
           <span class="chip"><%= hosteldata.hostel_type %></span>
           <span class="chip"><%= hosteldata.bed_availability %></span>
+          
           <span class="chip"><%= hosteldata.bed_type %></span>
+          <% if(hosteldata.chota_dhobi_facility && hosteldata.chota_dhobi_facility.length>0) { %>
+                                <span class="chip">IN BLOCK CHOTA DHOBI</span>
+
+                
+                <% } %>
         </div>
         
       <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
@@ -63,6 +69,8 @@
     <td style="padding: 14px;"><%= hosteldata.mess_caterer %></td>
     <td style="padding: 14px;">
       <div style="display: flex; flex-direction: column; gap: 8px;">
+
+       
         <div><strong>VEG MESS:</strong> <%= hosteldata.veg_mess_floor %></div>
         <div><strong>NON VEG MESS:</strong> <%= hosteldata.non_veg_mess_floor %></div>
         <div><strong>SPECIAL MESS:</strong> <%= hosteldata.special_mess_floor %></div>
@@ -96,6 +104,7 @@
       <div class="card">
           <div class="card-header" style="margin-bottom: 16px;">
             <p class="card-title" style="margin:0;">Pricing</p>
+            <p class="muted">(Previous Year's Prices)</p>
           </div>
           <% if(roomdetails && roomdetails.length > 0){ %>
               <% roomdetails.forEach(function(roomdetails){ %>
@@ -217,57 +226,7 @@
 
 
     </main>
-    <script>
-      (function(){
-        function initAccordion(){
-          const headers = document.querySelectorAll('.accordion-header');
-          headers.forEach(header => {
-            const targetId = header.dataset.target;
-            const panel = document.getElementById(targetId);
-            header.setAttribute('role', 'button');
-            header.setAttribute('aria-expanded', 'false');
-            if(panel) panel.setAttribute('aria-hidden', 'true');
-
-            header.addEventListener('click', () => toggle(header, panel));
-            header.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(header, panel); }
-            });
-          });
-        }
-
-        function toggle(header, panel){
-          const item = header.closest('.accordion-item');
-          const willOpen = !item.classList.contains('open');
-          item.classList.toggle('open', willOpen);
-          header.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-          if(panel){
-            panel.classList.toggle('open', willOpen);
-            panel.setAttribute('aria-hidden', willOpen ? 'false' : 'true');
-            if(willOpen){
-              const imgs = panel.querySelectorAll('img[data-src].lazy-floor');
-              imgs.forEach(img => { if(!img.src) img.src = img.dataset.src; });
-              const focusable = panel.querySelector('a, button, input, [tabindex]');
-              if(focusable) focusable.focus();
-            }
-          }
-        }
-
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAccordion);
-        else initAccordion();
-      })();
-    </script>
-    <script>
-      function showRoomImage(imageUrl) {
-        Swal.fire({
-          imageUrl: imageUrl,
-          imageWidth: 600,
-          imageHeight: 'auto',
-          imageAlt: 'Room Image',
-          confirmButtonText: 'Close',
-          confirmButtonColor: '#22c55e'
-        });
-      }
-    </script>
+    <script src="/script.js"></script>
     <%- include('partials/footer') %>
   </body>
 </html>

@@ -110,41 +110,32 @@
           <div id="hostelList">
       <% if(hosteldata && hosteldata.length>0){ %>
         <% hosteldata.forEach(function(hostel) { %>
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <p class="card-title"><%= hostel.hostel_name %></p>
+        <a href="/hostel/<%= hostel.hostel_id %>" class="card-link" style="text-decoration: none;">
+          <div class="card">
+            <div class="card-header" style="border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 20px;">
+                         <h3 style="font-size: 1.4rem; font-weight: 600; margin: 0 0 20px 0; line-height: 1.3;"><%= hostel.hostel_name %></h3>
+
             </div>
-            <% if(hostel.gender==="MENS") { %>
+            <div class="card-content">
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <% if(hostel.gender==="MENS") { %>
+                  <span class="chip-blue"><%= hostel.gender %></span>
+                <% } else { %>
+                  <span class="chip-ladies"><%= hostel.gender %></span>
+                <% } %>
+                <span class="chip"><%= hostel.bed_availability %></span>
+                <span class="chip"><%= hostel.hostel_type %></span>
+                <span class="chip"><%= hostel.bed_type %></span>
+                <% if(hostel.chota_dhobi_facility && hostel.chota_dhobi_facility.length>0 ) { %>
+                <span class="chip">IN BLOCK CHOTA DHOBI</span>
+                
+                <% } %>
+                                <span class="chip" data-dhobi="<%= hostel.chota_dhobi_facility %>" style="display: none;"></span>
 
-                                    <span class="chip-blue"><%= hostel.gender %></span>
-<% } else { %>
-
-                        <span class="chip-ladies"><%= hostel.gender %></span>
-<% } %>
-            <span class="chip"><%= hostel.bed_availability %></span>
-            <span class="chip"><%= hostel.hostel_type %></span>
-            <span class="chip"><%= hostel.bed_type %></span>
-            <% if (hostel.chota_dhobi_facility === 'Yes') {%>
-
-            <span class="chip">Chota Dhobi Facility : <%= hostel.chota_dhobi_facility %></span>
-
-            <% } else { %>
-            <span class="chip-no">Chota Dhobi Facility : <%= hostel.chota_dhobi_facility %></span>
-<%}%>
-
-
+              </div>
+            </div>
           </div>
-          <div class="card-content">
-            <a
-              href="/hostel/<%= hostel.hostel_id %>"
-              class="btn btn-primary"
-              style="width: fit-content"
-            >
-              Explore <i class="bi bi-arrow-right-circle-fill"></i>
-            </a>
-          </div>
-        </div>
+        </a>
         <% }); %>
      
       <% } else {  %>
@@ -156,112 +147,6 @@
     </main>
 
     <%- include('partials/footer') %>
-
-    <script>
-      // Search and Filter functionality with chips
-      const searchInput = document.getElementById('searchInput');
-      const clearFiltersBtn = document.getElementById('clearFilters');
-      const hostelList = document.getElementById('hostelList');
-      const resultsCount = document.getElementById('resultsCount');
-
-      // Get all filter chips
-      const filterChips = document.querySelectorAll('.filter-chip');
-      
-      // Active filters storage
-      const activeFilters = {
-        gender: [],
-        hostelType: [],
-        bedType: [],
-        dhobi: [],
-        bedAvailability: []
-      };
-
-      // Toggle chip selection
-      filterChips.forEach(chip => {
-        chip.addEventListener('click', function() {
-          this.classList.toggle('active');
-          const filterType = this.dataset.filter;
-          const value = this.dataset.value;
-          
-          if (this.classList.contains('active')) {
-            if (!activeFilters[filterType].includes(value)) {
-              activeFilters[filterType].push(value);
-            }
-          } else {
-            activeFilters[filterType] = activeFilters[filterType].filter(v => v !== value);
-          }
-          
-          filterHostels();
-        });
-      });
-
-      function filterHostels() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const selectedGenders = activeFilters.gender;
-        const selectedHostelTypes = activeFilters.hostelType;
-        const selectedBedTypes = activeFilters.bedType;
-        const selectedDhobi = activeFilters.dhobi;
-        const selectedBedAvailability = activeFilters.bedAvailability;
-
-        const cards = hostelList.querySelectorAll('.card');
-        let visibleCount = 0;
-
-        cards.forEach(card => {
-          const hostelName = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
-          const genderChip = card.querySelector('.chip-blue, .chip-ladies')?.textContent.trim() || '';
-          const chips = Array.from(card.querySelectorAll('.chip, .chip-no'));
-          
-          let hostelTypeText = '';
-          let bedTypeText = '';
-          let dhobiText = '';
-          let bedAvailabilityText = '';
-
-          chips.forEach(chip => {
-            const text = chip.textContent.trim();
-            if (text.includes('AC') || text.includes('NON AC')) {
-              hostelTypeText = text;
-            } else if (text.includes('BUNKER')) {
-              bedTypeText = text;
-            } else if (text.includes('Chota Dhobi')) {
-              dhobiText = text.includes('Yes') ? 'Yes' : 'No';
-            } else if (text.includes('BED')) {
-              bedAvailabilityText = text;
-            }
-          });
-
-          // Apply filters (if nothing is selected, show all)
-          const matchesSearch = hostelName.includes(searchTerm);
-          const matchesGender = selectedGenders.length === 0 || selectedGenders.includes(genderChip);
-          const matchesHostelType = selectedHostelTypes.length === 0 || selectedHostelTypes.includes(hostelTypeText);
-          const matchesBedType = selectedBedTypes.length === 0 || selectedBedTypes.includes(bedTypeText);
-          const matchesDhobi = selectedDhobi.length === 0 || selectedDhobi.includes(dhobiText);
-          const matchesBedAvailability = selectedBedAvailability.length === 0 || selectedBedAvailability.some(bed => bedAvailabilityText.includes(bed));
-
-          const isVisible = matchesSearch && matchesGender && matchesHostelType && 
-                           matchesBedType && matchesDhobi && matchesBedAvailability;
-
-          card.style.display = isVisible ? 'block' : 'none';
-          if (isVisible) visibleCount++;
-        });
-
-        // Update results count
-        const totalCards = cards.length;
-        resultsCount.textContent = `Showing ${visibleCount} of ${totalCards} hostels`;
-      }
-
-      // Event listeners
-      searchInput.addEventListener('input', filterHostels);
-
-      clearFiltersBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        filterChips.forEach(chip => chip.classList.remove('active'));
-        // Reset active filters
-        Object.keys(activeFilters).forEach(key => activeFilters[key] = []);
-        filterHostels();
-      });
-
-      // Initial count
-      window.addEventListener('DOMContentLoaded', filterHostels);
-    </script>
+    <script src="/script.js"></script>
   </body>
 </html>
