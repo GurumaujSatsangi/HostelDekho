@@ -84,12 +84,10 @@
           <div class="filter-group">
             <h4 class="filter-label">Beds Available</h4>
             <div class="chip-group">
-              <button class="filter-chip" data-filter="bedAvailability" data-value="1">1</button>
-              <button class="filter-chip" data-filter="bedAvailability" data-value="2">2</button>
-              <button class="filter-chip" data-filter="bedAvailability" data-value="3">3</button>
-              <button class="filter-chip" data-filter="bedAvailability" data-value="4">4</button>
-              <button class="filter-chip" data-filter="bedAvailability" data-value="6">6</button>
-              <button class="filter-chip" data-filter="bedAvailability" data-value="8">8</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="2 BED">2</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="3 BED">3</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="4 BED">4</button>
+              <button class="filter-chip" data-filter="bedAvailability" data-value="6 BED">6</button>
             </div>
           </div>
         </aside>
@@ -215,7 +213,7 @@
               bedTypeText = text;
             } else if (text.includes('Chota Dhobi')) {
               dhobiText = text.includes('Yes') ? 'Yes' : 'No';
-            } else if (!isNaN(text)) {
+            } else if (text.includes('BED')) {
               bedAvailabilityText = text;
             }
           });
@@ -226,7 +224,7 @@
           const matchesHostelType = selectedHostelTypes.length === 0 || selectedHostelTypes.includes(hostelTypeText);
           const matchesBedType = selectedBedTypes.length === 0 || selectedBedTypes.includes(bedTypeText);
           const matchesDhobi = selectedDhobi.length === 0 || selectedDhobi.includes(dhobiText);
-          const matchesBedAvailability = selectedBedAvailability.length === 0 || selectedBedAvailability.includes(bedAvailabilityText);
+          const matchesBedAvailability = selectedBedAvailability.length === 0 || selectedBedAvailability.some(bed => bedAvailabilityText.includes(bed));
 
           const isVisible = matchesSearch && matchesGender && matchesHostelType && 
                            matchesBedType && matchesDhobi && matchesBedAvailability;
