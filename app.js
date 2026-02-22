@@ -4,6 +4,8 @@ import ejs from "ejs";
 import session from "express-session";
 import { fileURLToPath } from "url";
 import path from "path";
+import {Filter} from 'profanity-check'
+
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
   import dotenv from "dotenv";
@@ -69,6 +71,9 @@ if (process.env.REDIS_HOST && process.env.REDIS_HOST.trim() !== '') {
 } else {
   console.log('ℹ️  Redis not configured - running in local mode (trending feature disabled)');
 }
+
+const multiLanguageFilter = new Filter({languages: ["english", "hindi"]})
+
 
 // Helper function to get the most viewed page
 async function getMostViewedPage() {
@@ -428,6 +433,14 @@ app.post("/submit-room-details", async (req, res) => {
       console.warn("Warning: Duplicate review attempt for hostel:", hostelid, "room:", roomnumber);
       return res.redirect("/floor/" + floorid + "?error=A review already exists for room " + roomnumber + " in this hostel. Only one review per room is allowed.");
     }
+
+    const check = multiLanguageFilter.isProfane(remarks)
+
+    if(check==true){
+return res.status(400).render("error.ejs", {
+  message: "Kindly refrain from posting abusive content on this website.",
+  retryLink: "https://hosteldekho.app/floor/" + floorid
+});    }
 
     // Proceed with insert if no existing review
     const { data, error } = await supabase.from("reviews").insert({

@@ -44,10 +44,38 @@
               
             <input type="hidden" name="hostelid" value="<%=hostel.hostel_id%>">
             <input type="hidden" name="floorid" value="<%=floorplan.id%>">
+            <% 
+              // Calculate min and max room numbers based on floor
+              const floorText = floorplan.floor.toLowerCase();
+              const floorMap = {
+                'ground': 0, 'first': 1, 'second': 2, 'third': 3, 'fourth': 4, 
+                'fifth': 5, 'sixth': 6, 'seventh': 7, 'eighth': 8, 'ninth': 9, 
+                'tenth': 10, 'eleventh': 11, 'twelfth': 12, 'thirteenth': 13, 
+                'fourteenth': 14, 'fifteenth': 15, 'sixteenth': 16, 'seventeenth': 17, 
+                'eighteenth': 18, 'nineteenth': 19, 'twentieth': 20
+              };
+              
+              let floor = 0;
+              for (let key in floorMap) {
+                if (floorText.includes(key)) {
+                  floor = floorMap[key];
+                  break;
+                }
+              }
+              
+              let minRoom, maxRoom;
+              if (floor === 0) {
+                minRoom = 1;
+                maxRoom = 45;
+              } else {
+                minRoom = floor * 100 + 1;
+                maxRoom = floor * 100 + 45;
+              }
+            %>
             <tr>
               <td>Room Number</td>
               <td>
-                <input class="form-control" name="roomnumber" type="text" required />
+                <input class="form-control" name="roomnumber" step="1" min="<%= minRoom %>" max="<%= maxRoom %>" type="number" required placeholder="<%= minRoom %> - <%= maxRoom %>" />
               </td>
             </tr>
             <tr>
