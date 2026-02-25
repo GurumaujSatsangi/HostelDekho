@@ -70,10 +70,21 @@
     <td style="padding: 14px;">
       <div style="display: flex; flex-direction: column; gap: 8px;">
 
-       
+       <% if(hosteldata.veg_mess_floor!="Open this select menu"){ %>
         <div><strong>VEG MESS:</strong> <%= hosteldata.veg_mess_floor %></div>
+
+       <% } %>
+
+       
+       <% if(hosteldata.non_veg_mess_floor!="Open this select menu"){ %>
         <div><strong>NON VEG MESS:</strong> <%= hosteldata.non_veg_mess_floor %></div>
+
+      <%  } %>
+
+       <% if(hosteldata.special_mess_floor!="Open this select menu"){ %>
         <div><strong>SPECIAL MESS:</strong> <%= hosteldata.special_mess_floor %></div>
+
+       <% } %>
       </div>
     </td>
     <td style="padding: 14px;"><%= hosteldata.badminton_court %></td>
