@@ -55,42 +55,83 @@
         </div>
         
       <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-      <table class="table-subtle" style="margin-top: 8px;">
-  <thead>
-  <tr>
-    <th style="padding: 14px;"><b>Mess Caterer</b></th>
-    <th style="padding: 14px;"><b>Mess Floors</b></th>
-    <th style="padding: 14px;"><b>Badminton Court</b></th>
-    <th style="padding: 14px;"><b>Chota Dhobi Facility</b></th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td style="padding: 14px;"><%= hosteldata.mess_caterer %></td>
-    <td style="padding: 14px;">
-      <div style="display: flex; flex-direction: column; gap: 8px;">
+<table class="table-subtle" style="margin-top: 8px;">
+<thead>
+<tr>
+  <th style="padding:14px;"><b>Mess Caterer</b></th>
+  <th style="padding:14px;"><b>Mess Floors</b></th>
+  <th style="padding:14px;"><b>Badminton Court</b></th>
+  <th style="padding:14px;"><b>Chota Dhobi Facility</b></th>
+</tr>
+</thead>
 
-       <% if(hosteldata.veg_mess_floor!="Open this select menu"){ %>
-        <div><strong>VEG MESS:</strong> <%= hosteldata.veg_mess_floor %></div>
+<tbody>
+<tr>
 
-       <% } %>
+<%
+const noFloorSelected =
+  hosteldata.veg_mess_floor === "Open this select menu" &&
+  hosteldata.non_veg_mess_floor === "Open this select menu" &&
+  hosteldata.special_mess_floor === "Open this select menu";
 
-       
-       <% if(hosteldata.non_veg_mess_floor!="Open this select menu"){ %>
-        <div><strong>NON VEG MESS:</strong> <%= hosteldata.non_veg_mess_floor %></div>
+const noCaterer = !hosteldata.mess_caterer;
+const bothMissing = noCaterer && noFloorSelected;
+%>
 
-      <%  } %>
+<% if(bothMissing){ %>
 
-       <% if(hosteldata.special_mess_floor!="Open this select menu"){ %>
-        <div><strong>SPECIAL MESS:</strong> <%= hosteldata.special_mess_floor %></div>
+  <!-- ⭐ ONE merged column -->
+  <td colspan="2" style="padding:14px;">
+    <p class="muted">
+      <i class="bi bi-emoji-frown-fill"></i> Sorry, We don’t have mess caterer & floor details.
+      Please <a href="https://forms.gle/QP1tMkVWhX1428vD7">Click Here</a> to Add Details
+    </p>
+  </td>
 
-       <% } %>
-      </div>
-    </td>
-    <td style="padding: 14px;"><%= hosteldata.badminton_court %></td>
-    <td style="padding: 14px;"><%= hosteldata.chota_dhobi_facility %></td>
-  </tr>
-  </tbody>
+<% } else { %>
+
+  <!-- ⭐ Mess Caterer -->
+  <td style="padding:14px;">
+    <% if(noCaterer){ %>
+  <p class="muted">
+      <i class="bi bi-emoji-frown-fill"></i> Sorry, We don’t have mess caterer details.
+      Please <a target="_blank" href="https://forms.gle/QP1tMkVWhX1428vD7">Click Here</a> to Add Details
+    </p>    <% } else { %>
+      <%= hosteldata.mess_caterer %>
+    <% } %>
+  </td>
+
+  <!-- ⭐ Mess Floors -->
+  <td style="padding:14px;">
+    <% if(noFloorSelected){ %>
+      <p class="muted">
+      <i class="bi bi-emoji-frown-fill"></i> Sorry, We don’t have mess floor details.
+      Please <a target="_blank" href="https://forms.gle/QP1tMkVWhX1428vD7">Click Here</a> to Add Details
+    </p>
+    <% } else { %>
+
+      <% if(hosteldata.veg_mess_floor !== "Open this select menu"){ %>
+        <div><strong>VEG:</strong> <%= hosteldata.veg_mess_floor %></div>
+      <% } %>
+
+      <% if(hosteldata.non_veg_mess_floor !== "Open this select menu"){ %>
+        <div><strong>NON VEG:</strong> <%= hosteldata.non_veg_mess_floor %></div>
+      <% } %>
+
+      <% if(hosteldata.special_mess_floor !== "Open this select menu"){ %>
+        <div><strong>SPECIAL:</strong> <%= hosteldata.special_mess_floor %></div>
+      <% } %>
+
+    <% } %>
+  </td>
+
+<% } %>
+
+<td style="padding:14px;"><%= hosteldata.badminton_court %></td>
+<td style="padding:14px;"><%= hosteldata.chota_dhobi_facility %></td>
+
+</tr>
+</tbody>
 </table>
       </div>
       </div>
@@ -98,7 +139,7 @@
       <div class="card">
           <div class="card-header">
             <p class="card-title" style="margin:0;">Floor Plans</p>
-            <p class="muted">(Click to View Rooms)</p>
+            <p class="muted">(Select Floor to View Room Reviews)</p>
           </div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;">
           <% if(floorplan && floorplan.length > 0){ %>
