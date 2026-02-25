@@ -406,7 +406,7 @@ app.get("/review/:floorId", async (req, res) => {
 
 
 app.post("/submit-room-details", async (req, res) => {
-  const { hostelid, floorid, remarks, roomnumber, jio, airtel, vit, cleanliness } = req.body;
+  const { hostelid, floorid, remarks, roomnumber, roomtype, jio, airtel, vit, cleanliness } = req.body;
 
   try {
     // Validate required fields
@@ -446,6 +446,7 @@ return res.status(400).render("error.ejs", {
     const { data, error } = await supabase.from("reviews").insert({
       hostel_id: hostelid,
       floor_id: floorid,
+      room_type: roomtype,
       airtel_speed: airtel,
       jio_speed: jio,
       vit_wifi_speed: vit,

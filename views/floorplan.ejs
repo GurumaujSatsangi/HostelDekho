@@ -91,11 +91,17 @@
         <% if(roomdata && roomdata.length > 0){ %>
             <% roomdata.forEach(function(room){ %>
               <div class="card">
-                                <div class="card-header">
-                                   <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;">
+<div class="card-header">
 
-                <div class=card-title><%= room.room_number %></div>
+<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;">
+
+  <div class=card-title><%= room.room_number %></div>
+
 </div>
+ <p class="muted"><%= room.room_type %></p>
+
+</div>
+<div class="card-content">
                  <% if(room.jio_speed === 'Poor' || room.jio_speed==='Very Poor') { %>
                       <span class="chip-no">Jio Connection : <%=room.jio_speed %></span>
 

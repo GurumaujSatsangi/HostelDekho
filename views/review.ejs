@@ -69,13 +69,30 @@
                 maxRoom = 45;
               } else {
                 minRoom = floor * 100 + 1;
-                maxRoom = floor * 100 + 45;
+                maxRoom = floor * 100 + 50;
               }
             %>
             <tr>
               <td>Room Number</td>
               <td>
-                <input class="form-control" name="roomnumber" step="1" min="<%= minRoom %>" max="<%= maxRoom %>" type="number" required placeholder="<%= minRoom %> - <%= maxRoom %>" />
+                <input class="form-control" name="roomnumber" step="1" min="<%= minRoom %>" max="<%= maxRoom %>" type="number" required />
+              </td>
+            </tr>
+            <tr>
+              <td>Room Type</td>
+              <td>
+                <% if (hostel.bed_availability && Array.isArray(hostel.bed_availability)) { %>
+                  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <% hostel.bed_availability.forEach((bedType, index) => { %>
+                      <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="roomtype" value="<%= bedType %>" <%= index === 0 ? 'required' : '' %> />
+                        <%= bedType %>
+                      </label>
+                    <% }); %>
+                  </div>
+                <% } else { %>
+                  <input class="form-control" name="roomtype" type="text" required placeholder="Enter room type" />
+                <% } %>
               </td>
             </tr>
             <tr>
