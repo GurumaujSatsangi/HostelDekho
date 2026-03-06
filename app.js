@@ -468,6 +468,12 @@ return res.status(400).render("error.ejs", {
 });
 
 
+app.get("/freshers",async(req,res)=>{
+
+  res.render("freshers.ejs");
+
+})
+
 
 
 
