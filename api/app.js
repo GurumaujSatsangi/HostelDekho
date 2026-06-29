@@ -144,9 +144,13 @@ cloudinary.config({
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const projectRoot = path.join(__dirname, "..");
+
+app.set("views", path.join(projectRoot, "views"));
+app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static("public"));
+app.use(express.static(path.join(projectRoot, "public")));
 
 // Page view tracking middleware
 app.use(async (req, res, next) => {
@@ -517,4 +521,8 @@ app.use(async(req,res,next)=>{
 return res.status(404).render("error.ejs");
 })
 
-app.listen(3000, "0.0.0.0")
+export default app;
+
+if (process.env.VERCEL !== "1") {
+  app.listen(3000, "0.0.0.0");
+}
