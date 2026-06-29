@@ -8,20 +8,29 @@ import {Filter} from 'profanity-check'
 
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
-  import dotenv from "dotenv";
-  import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
+import { createClient } from "@supabase/supabase-js";
 import axios from 'axios';
 import crypto from 'crypto';
 import Stream from 'stream';
 import { createClient as createRedisClient } from 'redis';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.join(__dirname, "..");
+
   const app = express();
 
-  dotenv.config();
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
-  );
+  dotenv.config({ path: path.join(projectRoot, ".env") });
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_KEY;
+  const supabase = supabaseUrl && supabaseKey
+    ? createClient(supabaseUrl, supabaseKey)
+    : null;
+
+if (!supabase) {
+  console.warn("⚠️  Supabase env vars are missing. Database-backed routes will be unavailable until SUPABASE_URL and SUPABASE_KEY are set.");
+}
 
 // Redis client configuration with TLS for AWS ElastiCache
 // Only initialize Redis if REDIS_HOST is configured (production environment)
@@ -142,10 +151,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.join(__dirname, "..");
-
 app.set("views", path.join(projectRoot, "views"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -175,6 +180,8 @@ app.use(async (req, res, next) => {
 
 
 async function getAllHostel() {
+  if (!supabase) return null;
+
   const { data, error } = await supabase.from("hostels").select("*");
 
   if (error) {
@@ -288,6 +295,7 @@ app.get("/", async (req, res) => {
 });
 
 async function similarHostels(bed_type,hostel_type,chota_dhobi_facility){
+  if (!supabase) return null;
 
   const {data,error}=await supabase.from("hostels").select("*").match({
     "hostel_type":hostel_type,
@@ -413,6 +421,12 @@ app.post("/submit-room-details", async (req, res) => {
   const { hostelid, floorid, remarks, roomnumber, roomtype, jio, airtel, vit, cleanliness } = req.body;
 
   try {
+    if (!supabase) {
+      return res.status(500).render("error.ejs", {
+        message: "Database connection is not configured. Set _URL and SUPABASE_KEY to enable submissions."
+      });
+    }
+
     // Validate required fields
     if (!hostelid || !floorid || !roomnumber) {
       console.error("Error: Missing required fields - hostelid, floorid, or roomnumber");
